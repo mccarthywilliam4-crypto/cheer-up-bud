@@ -33,28 +33,49 @@
         <span id="face-emoji" class="face-emoji" aria-hidden="true">😒</span>
       </div>
       <div id="speech-bubble" class="speech-bubble">Go home.</div>
-      <div id="items-grid" class="items-grid"></div>
+      <div class="question-meta">
+        <span id="question-progress">Question 1/10</span>
+        <span id="wrong-counter">⚠ 0/3</span>
+      </div>
+      <div class="combo-wrap">
+        <span id="combo-counter" class="combo-counter hidden">🔥 3 combo</span>
+      </div>
+      <div class="question-panel">
+        <p id="question-text" class="question-text">Loading questions...</p>
+        <div id="answers-grid" class="answers-grid"></div>
+        <button id="buy-beer-btn" class="secondary-btn" type="button">Buy him a beer 🍺 (-200)</button>
+      </div>
     </section>
 
     <section id="screen-beerbong" class="screen">
-      <h2>🍺 Beer Bong Challenge</h2>
-      <p>Tap fast before time runs out.</p>
-      <div class="beer-glass-wrap">
-        <svg class="beer-glass" viewBox="0 0 120 160" xmlns="http://www.w3.org/2000/svg" aria-label="Beer glass progress">
-          <defs>
-            <clipPath id="glass-clip">
-              <path d="M20 10 L15 150 H85 L80 10 Z" />
-            </clipPath>
-          </defs>
-          <path d="M20 10 L15 150 H85 L80 10 Z" fill="rgba(255,255,255,0.06)" stroke="#d7d7d7" stroke-width="3" />
-          <path d="M80 40 Q110 40 110 80 Q110 120 80 120" fill="none" stroke="#d7d7d7" stroke-width="3" />
-          <rect id="beer-fill" x="15" y="149" width="70" height="0" fill="#f0a500" clip-path="url(#glass-clip)" />
-          <rect id="beer-foam" x="15" y="149" width="70" height="0" fill="#fff" opacity="0.88" clip-path="url(#glass-clip)" />
-        </svg>
+      <h2>🏓 Beer Pong Shot</h2>
+      <p id="beerbong-instructions">Lock in the width first.</p>
+      <div id="cup-rack" class="cup-rack" aria-label="Beer pong cup rack"></div>
+      <div class="beerbong-meta">
+        <span id="beerbong-shot-label">Shot 1 of 2</span>
+        <span id="beerbong-result-label">Sinks: 0/2</span>
       </div>
-      <div class="chug-wrap"><div id="chug-bar" class="chug-bar"></div></div>
-      <div id="beerbong-timer" class="timer">5.0s</div>
-      <button id="chug-btn" class="chug-btn">TAP TO CHUG</button>
+      <div id="width-lane" class="aim-lane active-lane">
+        <div class="lane-header">
+          <span>Width</span>
+          <span>Miss ← sweet spot → Miss</span>
+        </div>
+        <div class="lane-track horizontal-track">
+          <div class="sweet-spot"></div>
+          <div id="width-indicator" class="aim-indicator horizontal-indicator"></div>
+        </div>
+      </div>
+      <div id="power-lane" class="aim-lane idle-lane">
+        <div class="lane-header">
+          <span>Depth / Power</span>
+          <span>Short ↑ sweet spot ↓ Long</span>
+        </div>
+        <div class="lane-track vertical-track">
+          <div class="sweet-spot"></div>
+          <div id="power-indicator" class="aim-indicator vertical-indicator"></div>
+        </div>
+      </div>
+      <button id="beerbong-action-btn" class="chug-btn" type="button">Lock Width</button>
     </section>
 
     <section id="screen-gameover" class="screen">
