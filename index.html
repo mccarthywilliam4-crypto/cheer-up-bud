@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cheer Up, Bud</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <section id="screen-menu" class="screen active">
+      <h1>😒 Cheer Up, Bud</h1>
+      <p>Try to cheer up your impossible friend.</p>
+      <label for="initials">Initials</label>
+      <input id="initials" maxlength="3" autocomplete="off" placeholder="ABC" />
+      <button id="start-btn">Start Game</button>
+      <div class="leaderboard-card">
+        <h2>Leaderboard</h2>
+        <ol id="leaderboard-menu"></ol>
+      </div>
+    </section>
+
+    <section id="screen-game" class="screen">
+      <div class="hud">
+        <span id="round-label">Round 1</span>
+        <span id="score-display">Score: 0</span>
+      </div>
+      <div class="anger-wrap">
+        <div id="anger-bar" class="anger-bar"></div>
+      </div>
+      <div id="face-container" class="face-container">
+        <img id="face-img" alt="Grumpy face" src="assets/face/annoyed.png" />
+        <span id="face-emoji" class="face-emoji" aria-hidden="true">😒</span>
+      </div>
+      <div id="speech-bubble" class="speech-bubble">Go home.</div>
+      <div id="items-grid" class="items-grid"></div>
+    </section>
+
+    <section id="screen-beerbong" class="screen">
+      <h2>🍺 Beer Bong Challenge</h2>
+      <p>Tap fast before time runs out.</p>
+      <div class="chug-wrap"><div id="chug-bar" class="chug-bar"></div></div>
+      <div id="beerbong-timer" class="timer">5.0s</div>
+      <button id="chug-btn" class="chug-btn">TAP TO CHUG</button>
+    </section>
+
+    <section id="screen-gameover" class="screen">
+      <div class="big-emoji">🖕</div>
+      <h2>You tried. You failed. Don't talk to me.</h2>
+      <p id="gameover-score"></p>
+      <div class="leaderboard-card">
+        <h3>Leaderboard</h3>
+        <ol id="leaderboard-gameover"></ol>
+      </div>
+      <button id="retry-btn">Try Again</button>
+    </section>
+
+    <section id="screen-win" class="screen">
+      <h2>...I guess you're ok.</h2>
+      <p id="win-score"></p>
+      <div class="leaderboard-card">
+        <h3>Leaderboard</h3>
+        <ol id="leaderboard-win"></ol>
+      </div>
+      <button id="play-again-btn">Play Again</button>
+    </section>
+  </main>
+
+  <script src="game.js"></script>
+</body>
+</html>
