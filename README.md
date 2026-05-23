@@ -23,7 +23,7 @@ https://mccarthywilliam4-crypto.github.io/cheer-up-bud
 ## Adding Assets
 - Drop face photos into `assets/face/` named: `annoyed.png`, `angry.png`, `fuming.png`, `volcanic.png`
 - Drop item images into `assets/items/` — filenames match those in `game.js`
-- Until images are added, emoji fallbacks display automatically
+- Until images are added, illustrated SVG placeholders display automatically
 
 ## Tech
 - Pure HTML/CSS/JavaScript — no dependencies

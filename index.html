@@ -39,6 +39,19 @@
     <section id="screen-beerbong" class="screen">
       <h2>🍺 Beer Bong Challenge</h2>
       <p>Tap fast before time runs out.</p>
+      <div class="beer-glass-wrap">
+        <svg class="beer-glass" viewBox="0 0 120 160" xmlns="http://www.w3.org/2000/svg" aria-label="Beer glass progress">
+          <defs>
+            <clipPath id="glass-clip">
+              <path d="M20 10 L15 150 H85 L80 10 Z" />
+            </clipPath>
+          </defs>
+          <path d="M20 10 L15 150 H85 L80 10 Z" fill="rgba(255,255,255,0.06)" stroke="#d7d7d7" stroke-width="3" />
+          <path d="M80 40 Q110 40 110 80 Q110 120 80 120" fill="none" stroke="#d7d7d7" stroke-width="3" />
+          <rect id="beer-fill" x="15" y="149" width="70" height="0" fill="#f0a500" clip-path="url(#glass-clip)" />
+          <rect id="beer-foam" x="15" y="149" width="70" height="0" fill="#fff" opacity="0.88" clip-path="url(#glass-clip)" />
+        </svg>
+      </div>
       <div class="chug-wrap"><div id="chug-bar" class="chug-bar"></div></div>
       <div id="beerbong-timer" class="timer">5.0s</div>
       <button id="chug-btn" class="chug-btn">TAP TO CHUG</button>
