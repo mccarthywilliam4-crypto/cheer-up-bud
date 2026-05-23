@@ -3,6 +3,8 @@
   --accent: #e63946;
   --text: #f1f1f1;
   --card: #23253d;
+  --success: #2a9d62;
+  --danger: #d64545;
 }
 
 * { box-sizing: border-box; }
@@ -50,16 +52,35 @@ button {
   background: var(--accent);
   color: #fff;
   font-weight: 700;
+  cursor: pointer;
 }
 
-.hud {
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.hud,
+.question-meta,
+.beerbong-meta,
+.lane-header {
   display: flex;
   justify-content: space-between;
+  gap: 8px;
+}
+
+.hud,
+.question-meta,
+.beerbong-meta {
   font-weight: 700;
 }
 
-.anger-wrap,
-.chug-wrap {
+.lane-header {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.anger-wrap {
   width: 100%;
   height: 20px;
   border-radius: 999px;
@@ -73,13 +94,6 @@ button {
   height: 100%;
   background: linear-gradient(90deg, #ff9f1c, #e63946);
   transition: width 0.25s ease;
-}
-
-.chug-bar {
-  width: 0%;
-  height: 100%;
-  background: linear-gradient(90deg, #ffd166, #f77f00);
-  transition: width 0.1s linear;
 }
 
 .face-container {
@@ -116,7 +130,7 @@ button {
   border-radius: 14px;
   padding: 10px 12px;
   position: relative;
-  min-height: 56px;
+  min-height: 68px;
 }
 
 .speech-bubble::before {
@@ -131,96 +145,202 @@ button {
   border-bottom: 10px solid #fff;
 }
 
-.items-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
+.combo-wrap {
+  min-height: 28px;
 }
 
-.item-btn {
-  position: relative;
-  padding: 8px 4px;
-  background: #2a2d49;
-  border: 1px solid #3f4468;
-  border-radius: 10px;
-  color: #fff;
-  font-size: 11px;
-  min-height: 88px;
+.combo-counter {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 166, 0, 0.18);
+  border: 1px solid rgba(255, 166, 0, 0.45);
+  color: #ffd166;
+  font-weight: 700;
+}
+
+.hidden {
+  display: none;
+}
+
+.question-panel {
+  background: rgba(10, 14, 28, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 14px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
+  gap: 12px;
 }
 
-.item-art {
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.05);
+.question-text {
+  font-size: 19px;
+  line-height: 1.4;
+}
+
+.answers-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.answer-btn,
+.secondary-btn {
   border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-.item-hint {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  width: 16px;
-  height: 16px;
-  border-radius: 999px;
-  display: flex;
-  align-items: center;
+.answer-btn {
+  background: #2a2d49;
+  text-align: left;
+  min-height: 60px;
+  transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.answer-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.answer-btn.correct {
+  background: rgba(42, 157, 98, 0.92);
+  border-color: rgba(152, 255, 203, 0.8);
+}
+
+.answer-btn.wrong {
+  background: rgba(214, 69, 69, 0.95);
+  border-color: rgba(255, 184, 184, 0.8);
+}
+
+.answer-btn.loading {
   justify-content: center;
-  font-size: 10px;
-  font-weight: 700;
-  color: #fff;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
-}
-
-.item-hint.risky {
-  background: #d64545;
-}
-
-.item-hint.safe {
-  background: #2a9d62;
-}
-
-.item-btn.used {
-  opacity: 0.35;
-  pointer-events: none;
-}
-
-.timer {
   text-align: center;
-  font-size: 28px;
-  font-weight: 700;
 }
 
-.chug-btn {
-  margin-top: auto;
-  padding: 20px;
-  font-size: 24px;
+.secondary-btn {
+  background: rgba(255, 255, 255, 0.08);
 }
 
 #screen-beerbong {
   background: #1a0e05;
 }
 
-#screen-beerbong .chug-wrap {
-  display: none;
+.cup-rack {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  min-height: 74px;
 }
 
-.beer-glass-wrap {
-  width: 170px;
+.cup {
+  width: 46px;
+  height: 52px;
+  border-radius: 0 0 14px 14px;
+  border: 2px solid rgba(255, 255, 255, 0.22);
+  background: linear-gradient(180deg, rgba(255,255,255,0.3), rgba(255,255,255,0.12));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  transform-origin: center bottom;
+  transition: transform 0.2s ease, opacity 0.2s ease, background 0.2s ease;
+}
+
+.cup.sunk {
+  background: linear-gradient(180deg, rgba(42,157,98,0.92), rgba(20,80,52,0.92));
+  transform: translateY(4px) scale(0.95);
+}
+
+.cup.missed {
+  background: linear-gradient(180deg, rgba(214,69,69,0.92), rgba(110,25,25,0.92));
+  opacity: 0.75;
+}
+
+.aim-lane {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.active-lane {
+  border-color: rgba(255, 209, 102, 0.75);
+  box-shadow: 0 0 0 1px rgba(255, 209, 102, 0.25) inset;
+}
+
+.idle-lane {
+  opacity: 0.7;
+}
+
+.lane-track {
+  position: relative;
+  border-radius: 999px;
+  background: rgba(15, 16, 32, 0.9);
+  overflow: hidden;
+}
+
+.horizontal-track {
+  height: 26px;
+}
+
+.vertical-track {
+  height: 180px;
+  width: 40px;
   margin: 0 auto;
+  border-radius: 24px;
 }
 
-.beer-glass {
-  width: 100%;
-  height: auto;
-  display: block;
-  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.35));
+.sweet-spot {
+  position: absolute;
+  background: rgba(255, 209, 102, 0.28);
+  border: 1px solid rgba(255, 209, 102, 0.65);
+}
+
+.horizontal-track .sweet-spot {
+  top: 2px;
+  bottom: 2px;
+  left: 43%;
+  width: 14%;
+  border-radius: 999px;
+}
+
+.vertical-track .sweet-spot {
+  left: 3px;
+  right: 3px;
+  top: 43%;
+  height: 14%;
+  border-radius: 999px;
+}
+
+.aim-indicator {
+  position: absolute;
+  background: #ffd166;
+  box-shadow: 0 0 10px rgba(255, 209, 102, 0.55);
+}
+
+.horizontal-indicator {
+  top: 1px;
+  width: 18px;
+  height: 24px;
+  border-radius: 999px;
+  transform: translateX(-50%);
+}
+
+.vertical-indicator {
+  left: 3px;
+  right: 3px;
+  height: 14px;
+  border-radius: 999px;
+  transform: translateY(-50%);
+}
+
+.chug-btn {
+  margin-top: auto;
+  padding: 18px;
+  font-size: 22px;
 }
 
 .leaderboard-card {

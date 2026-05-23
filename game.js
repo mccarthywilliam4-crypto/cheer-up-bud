@@ -1,3 +1,10 @@
+const GROQ_API_KEY = ''; // Add your Groq API key here to enable AI-generated insults.
+const QUESTION_COUNT = 10;
+const WRONG_LIMIT = 3;
+const BUY_BEER_COST = 200;
+const BUY_BEER_ANGER_REDUCTION = 20;
+const GROQ_MODEL = 'llama3-8b-8192';
+
 const FACE_STATES = [
   { max: 25, img: 'assets/face/annoyed.png', emoji: '😒', label: 'Annoyed', fallbackColor: '#f2c94c' },
   { max: 50, img: 'assets/face/angry.png', emoji: '😠', label: 'Angry', fallbackColor: '#f2994a' },
@@ -5,134 +12,175 @@ const FACE_STATES = [
   { max: 100, img: 'assets/face/volcanic.png', emoji: '🤬', label: 'Volcanic', fallbackColor: '#a33cf2' },
 ];
 
-const ITEM_FALLBACKS = {
-  HockeyStick: '🏒', GoalNet: '��', RollerSkates: '🛼', Trophy: '🏆', Jersey: '👕', AirHorn: '📣', IceBlock: '🧊', Beer: '🍺', FistBump: '👊', Handshake: '🤝',
-  Deer: '🦌', Rifle: '🔫', BearTrap: '🪤', Squirrel: '🐿️', Boots: '🥾', Gloves: '🧤', Log: '🪵', Knife: '🔪', Duck: '🦆', Tree: '🌲',
-  Tent: '⛺', Campfire: '🔥', HotDog: '🌭', Axe: '🪓', Bear: '🐻', Moon: '🌙', FishingRod: '🎣', Mosquito: '🦟', Whiskey: '🥃', Map: '🗺️',
-  SportsCar: '🏎️', Wrench: '🔧', Tire: '🛞', DeadBattery: '🔋', GasCan: '⛽', CheckeredFlag: '🏁', Bolt: '🔩', PickupTruck: '🛻', Exhaust: '💨', CarKeys: '🔑',
-  Joint: '🚬', Lighter: '🔥', Edible: '🍪', SmokeCloud: '☁️', VinylRecord: '💿', Couch: '🛋️', Swirl: '🌀', Pizza: '🍕', EyeDrops: '💧', Brain: '🧠',
-  Fish: '🐟', Bucket: '🪣', Sun: '☀️', Shrimp: '🦐', Worm: '🪱', Boat: '🚤', Wave: '🌊', Sleeping: '😴',
-  BeerPint: '🍺', PoolCue: '🎱', Mic: '🎤', Dancer: '💃', BoxingGlove: '🥊', Cheers: '🥂', SlotMachine: '🎰', Disco: '🪩', SaltShaker: '🧂', Medal: '🏅',
+const DIFFICULTY_EFFECTS = {
+  easy: { wrong: 25, correct: -3 },
+  medium: { wrong: 18, correct: -6 },
+  hard: { wrong: 10, correct: -10 },
+};
+
+const FALLBACK_TRIVIA = {
+  hockey: [
+    { question: 'In hockey, what do players try to shoot into the net?', correct: 'A puck', incorrect: ['A baseball', 'A tennis ball', 'A shuttlecock'] },
+    { question: 'How many periods are played in a standard hockey game?', correct: 'Three', incorrect: ['Two', 'Four', 'Five'] },
+    { question: 'What piece of equipment protects a hockey player\'s head?', correct: 'A helmet', incorrect: ['A visor cap', 'A mouthguard', 'A shoulder pad'] },
+    { question: 'Which position usually guards the net in hockey?', correct: 'Goalie', incorrect: ['Center', 'Winger', 'Defenseman'] },
+  ],
+  hunting: [
+    { question: 'What kind of tracks help hunters spot where an animal walked?', correct: 'Footprints', incorrect: ['Clouds', 'Shadows', 'Campfires'] },
+    { question: 'Why do hunters often wear camouflage?', correct: 'To blend into their surroundings', incorrect: ['To stay warmer than everyone else', 'To signal airplanes', 'To attract animals'] },
+    { question: 'What is a common safety rule when carrying a rifle?', correct: 'Keep the muzzle pointed in a safe direction', incorrect: ['Swing it freely while hiking', 'Always rest it on your shoulder with the trigger pressed', 'Carry it with the safety off'] },
+    { question: 'What time of day are deer often most active?', correct: 'Dawn and dusk', incorrect: ['Only at noon', 'Only after midnight', 'Only in heavy rain'] },
+  ],
+  camping: [
+    { question: 'What should you pack if you want to start a campfire safely?', correct: 'Matches or a lighter', incorrect: ['A hair dryer', 'A blender', 'A TV remote'] },
+    { question: 'What does a map help you do while camping?', correct: 'Navigate trails', incorrect: ['Cook food faster', 'Keep bugs away', 'Pitch a tent'] },
+    { question: 'What should you store away from your tent to avoid attracting animals?', correct: 'Food', incorrect: ['Sleeping bags', 'Flashlights', 'Boots'] },
+    { question: 'What is usually the first thing you should set up at camp?', correct: 'Your shelter', incorrect: ['A karaoke machine', 'A hammock over a river', 'A cooler in the sun'] },
+  ],
+  cars: [
+    { question: 'What does a check engine light usually mean?', correct: 'The car needs attention', incorrect: ['The radio is too loud', 'Your tires are overinflated with joy', 'The gas cap turned into a trophy'] },
+    { question: 'What do you use a wrench for?', correct: 'Tightening or loosening bolts', incorrect: ['Checking tire pressure', 'Waxing the hood', 'Refilling windshield washer fluid'] },
+    { question: 'Which pedal makes a car slow down?', correct: 'Brake', incorrect: ['Clutch', 'Gas', 'Parking sensor'] },
+    { question: 'What should you regularly check to keep a car running well?', correct: 'Oil level', incorrect: ['Cup holder depth', 'Speaker color', 'Seatbelt stitching pattern'] },
+  ],
+  weed: [
+    { question: 'Which device is commonly used to light a joint?', correct: 'A lighter', incorrect: ['A can opener', 'A key fob', 'A stapler'] },
+    { question: 'What food is often jokingly linked to the munchies?', correct: 'Pizza', incorrect: ['Raw onions', 'Plain rice cakes', 'Canned spinach'] },
+    { question: 'What is an edible?', correct: 'A cannabis-infused food item', incorrect: ['A strain of lawn grass', 'A type of ashtray', 'A rolling tray brand only'] },
+    { question: 'What might someone use after smoking to reduce red eyes?', correct: 'Eye drops', incorrect: ['Brake fluid', 'Sunscreen', 'Engine oil'] },
+  ],
+  fishing: [
+    { question: 'What do anglers usually put on a hook to attract fish?', correct: 'Bait', incorrect: ['A flashlight', 'A whistle', 'A car key'] },
+    { question: 'What should you keep tight to avoid losing a fish once it bites?', correct: 'Your fishing line', incorrect: ['Your backpack straps', 'The boat stereo cord', 'Your jacket zipper'] },
+    { question: 'Which piece of gear helps you reel a fish in?', correct: 'A rod and reel', incorrect: ['A tire iron', 'A compass', 'A lantern'] },
+    { question: 'Where do fish usually live?', correct: 'In water', incorrect: ['Inside hollow trees', 'On mountain ridges', 'Buried in sand dunes'] },
+  ],
+  barCrawl: [
+    { question: 'What does it mean to start a tab at a bar?', correct: 'Open a running bill', incorrect: ['Order a taxi', 'Reserve the jukebox', 'Challenge the bartender to trivia'] },
+    { question: 'What game is commonly played with a cue stick in bars?', correct: 'Pool', incorrect: ['Darts hockey', 'Table tennis bowling', 'Foam fencing'] },
+    { question: 'What should you do before leaving a bar if you opened a tab?', correct: 'Close it out', incorrect: ['Hide the receipt', 'Order water for the pool table', 'Take the glassware home'] },
+    { question: 'What is the bartender mainly responsible for?', correct: 'Serving drinks', incorrect: ['Judging karaoke finals', 'Running the parking lot', 'Managing hotel check-ins'] },
+  ],
+  movies: [
+    { question: 'Which kind of movie usually features explosions, chases, and fights?', correct: 'Action', incorrect: ['Nature documentary', 'Silent art film', 'Cooking special'] },
+    { question: 'What genre is meant to make the audience laugh?', correct: 'Comedy', incorrect: ['Thriller', 'Horror', 'Western'] },
+    { question: 'What genre usually builds suspense and tension around danger?', correct: 'Thriller', incorrect: ['Musical', 'Romantic comedy', 'Sports documentary'] },
+    { question: 'What is a trailer supposed to do?', correct: 'Preview a movie before release', incorrect: ['Replace the ending', 'List every actor\'s salary', 'Explain how projectors work'] },
+  ],
 };
 
 const ROUND_DATA = [
   {
+    key: 'hockey',
     theme: '🏒 Hockey',
+    label: 'Hockey',
     bgGradient: 'linear-gradient(135deg, #0d1b2a, #1b4f72)',
-    responses: ['Get that out of my face.', 'Seriously?', 'You call that a gift?', "I've seen better in peewee.", 'Go home.'],
-    items: [
-      { name: 'Hockey Stick', img: 'assets/items/hockey_stick.png', angry: true },
-      { name: 'Goal Net', img: 'assets/items/goal_net.png', angry: false },
-      { name: 'Roller Skates', img: 'assets/items/roller_skates.png', angry: true },
-      { name: 'Trophy', img: 'assets/items/trophy.png', angry: false },
-      { name: 'Jersey', img: 'assets/items/jersey.png', angry: true },
-      { name: 'Air Horn', img: 'assets/items/air_horn.png', angry: true },
-      { name: 'Ice Block', img: 'assets/items/ice_block.png', angry: false },
-      { name: 'Beer', img: 'assets/items/beer.png', angry: true },
-      { name: 'Fist Bump', img: 'assets/items/fist_bump.png', angry: true },
-      { name: 'Handshake', img: 'assets/items/handshake.png', angry: false },
+    triviaCategory: 21,
+    triviaDifficulty: 'easy',
+    insultContext: 'hockey',
+    fallbackInsults: [
+      'You handle a stick like it personally offended you and you\'re losing the argument.',
+      'Peewee players skate backwards faster than you move forward in life.',
+      'The only thing you\'ve ever scored is a pity invite to the game.',
     ],
   },
   {
+    key: 'hunting',
     theme: '🦌 Hunting',
+    label: 'Hunting',
     bgGradient: 'linear-gradient(135deg, #1a2e1a, #4a3728)',
-    responses: ["That's pathetic.", 'My gran hunts better than you.', 'Put that away.', "You're embarrassing yourself.", 'Leave.'],
-    items: [
-      { name: 'Deer', img: 'assets/items/deer.png', angry: true },
-      { name: 'Rifle', img: 'assets/items/rifle.png', angry: false },
-      { name: 'Bear Trap', img: 'assets/items/bear_trap.png', angry: true },
-      { name: 'Squirrel', img: 'assets/items/squirrel.png', angry: true },
-      { name: 'Boots', img: 'assets/items/boots.png', angry: false },
-      { name: 'Gloves', img: 'assets/items/gloves.png', angry: false },
-      { name: 'Log', img: 'assets/items/log.png', angry: true },
-      { name: 'Knife', img: 'assets/items/knife.png', angry: true },
-      { name: 'Duck', img: 'assets/items/duck.png', angry: true },
-      { name: 'Tree', img: 'assets/items/tree.png', angry: false },
+    triviaCategory: 27,
+    triviaDifficulty: 'easy',
+    insultContext: 'hunting',
+    fallbackInsults: [
+      'The deer walked up to get a closer look at whatever the hell you\'re doing.',
+      'You\'ve been outside for three hours and the only thing you\'ve killed is my patience.',
+      'You couldn\'t track a bleeding elephant through fresh snow.',
     ],
   },
   {
+    key: 'camping',
     theme: '🏕️ Camping',
+    label: 'Camping',
     bgGradient: 'linear-gradient(135deg, #0f1f0f, #2c3e1a)',
-    responses: ['I hate the outdoors. And you.', 'Is this a joke?', "You're useless.", 'Go back to your tent.', 'No.'],
-    items: [
-      { name: 'Tent', img: 'assets/items/tent.png', angry: false },
-      { name: 'Campfire', img: 'assets/items/campfire.png', angry: false },
-      { name: 'Hot Dog', img: 'assets/items/hot_dog.png', angry: true },
-      { name: 'Axe', img: 'assets/items/axe.png', angry: true },
-      { name: 'Bear', img: 'assets/items/bear.png', angry: true },
-      { name: 'Moon', img: 'assets/items/moon.png', angry: true },
-      { name: 'Fishing Rod', img: 'assets/items/fishing_rod.png', angry: false },
-      { name: 'Mosquito', img: 'assets/items/mosquito.png', angry: true },
-      { name: 'Whiskey', img: 'assets/items/whiskey.png', angry: false },
-      { name: 'Map', img: 'assets/items/map.png', angry: true },
+    triviaCategory: 22,
+    triviaDifficulty: 'medium',
+    insultContext: 'camping',
+    fallbackInsults: [
+      'You packed four hoodies and forgot matches. You deserve to be cold and stupid.',
+      'The bear spray is for bears. Stop pointing it at yourself, that tracks though.',
+      'You called it \"glamping\" once. I haven\'t forgotten.',
     ],
   },
   {
+    key: 'cars',
     theme: '🚗 Cars',
+    label: 'Cars',
     bgGradient: 'linear-gradient(135deg, #1a1a1a, #2e2e2e)',
-    responses: ['You know nothing about cars.', "Don't touch my garage.", 'Unbelievable.', 'Get out.', 'Amateur.'],
-    items: [
-      { name: 'Sports Car', img: 'assets/items/sports_car.png', angry: true },
-      { name: 'Wrench', img: 'assets/items/wrench.png', angry: false },
-      { name: 'Tire', img: 'assets/items/tire.png', angry: true },
-      { name: 'Dead Battery', img: 'assets/items/dead_battery.png', angry: true },
-      { name: 'Gas Can', img: 'assets/items/gas_can.png', angry: false },
-      { name: 'Checkered Flag', img: 'assets/items/checkered_flag.png', angry: false },
-      { name: 'Bolt', img: 'assets/items/bolt.png', angry: true },
-      { name: 'Pickup Truck', img: 'assets/items/pickup_truck.png', angry: false },
-      { name: 'Exhaust', img: 'assets/items/exhaust.png', angry: true },
-      { name: 'Car Keys', img: 'assets/items/car_keys.png', angry: true },
+    triviaCategory: 28,
+    triviaDifficulty: 'medium',
+    insultContext: 'cars',
+    fallbackInsults: [
+      'You put premium in a 2003 Civic and felt good about yourself. Sit down.',
+      'The check engine light isn\'t a suggestion, genius. It\'s been on for two years.',
+      'You rev it at a red light like anyone is impressed. Nobody is impressed.',
     ],
   },
   {
+    key: 'weed',
     theme: '🌿 Weed',
+    label: 'Weed',
     bgGradient: 'linear-gradient(135deg, #1a0d2e, #2e1a0d)',
-    responses: ["You're an idiot.", "This isn't helping.", 'Put that away.', "I'm not laughing.", 'Go away.'],
-    items: [
-      { name: 'Joint', img: 'assets/items/joint.png', angry: false },
-      { name: 'Lighter', img: 'assets/items/lighter.png', angry: true },
-      { name: 'Edible', img: 'assets/items/edible.png', angry: true },
-      { name: 'Smoke Cloud', img: 'assets/items/smoke_cloud.png', angry: true },
-      { name: 'Vinyl Record', img: 'assets/items/vinyl_record.png', angry: true },
-      { name: 'Couch', img: 'assets/items/couch.png', angry: false },
-      { name: 'Swirl', img: 'assets/items/swirl.png', angry: true },
-      { name: 'Pizza', img: 'assets/items/pizza.png', angry: false },
-      { name: 'Eye Drops', img: 'assets/items/eye_drops.png', angry: true },
-      { name: 'Brain', img: 'assets/items/brain.png', angry: true },
+    triviaCategory: 9,
+    triviaDifficulty: 'medium',
+    insultContext: 'weed',
+    fallbackInsults: [
+      'You greened out on two hits and told everyone you were \"just tired.\" We know.',
+      'You called it a \"vibe\" three times in one sentence. The vibe is you\'re an idiot.',
+      'You\'ve been \"about to clean your piece\" for four months. It\'s basically a biohazard.',
     ],
   },
   {
+    key: 'fishing',
     theme: '🎣 Fishing',
+    label: 'Fishing',
     bgGradient: 'linear-gradient(135deg, #0d1f2e, #1a3a2a)',
-    responses: ["That's the worst cast I've ever seen.", 'You scared the fish.', 'Useless.', "I'm done.", 'Go home.'],
-    items: [
-      { name: 'Fishing Rod', img: 'assets/items/fishing_rod.png', angry: false },
-      { name: 'Fish', img: 'assets/items/fish.png', angry: true },
-      { name: 'Bucket', img: 'assets/items/bucket.png', angry: true },
-      { name: 'Sun', img: 'assets/items/sun.png', angry: true },
-      { name: 'Shrimp', img: 'assets/items/shrimp.png', angry: true },
-      { name: 'Worm', img: 'assets/items/worm.png', angry: false },
-      { name: 'Boat', img: 'assets/items/boat.png', angry: false },
-      { name: 'Wave', img: 'assets/items/wave.png', angry: true },
-      { name: 'Beer', img: 'assets/items/beer.png', angry: false },
-      { name: 'Sleeping', img: 'assets/items/sleeping.png', angry: true },
+    triviaCategory: 27,
+    triviaDifficulty: 'hard',
+    insultContext: 'fishing',
+    fallbackInsults: [
+      'You tangled your line in a tree, on a boat, in open water. How.',
+      'The fish aren\'t biting because they can hear you talking about your podcast idea.',
+      'You bought $400 in gear and got outsmarted by something with no brain and no spine.',
     ],
   },
   {
+    key: 'barCrawl',
     theme: '🍺 Bar Crawl',
+    label: 'Bar Crawl',
     bgGradient: 'linear-gradient(135deg, #1a0a2e, #2e0a1a)',
-    responses: ['You ruined my night.', 'I was having a perfectly bad time.', 'Get away from me.', 'Bartender, remove this person.', 'Nope.'],
-    items: [
-      { name: 'Beer Pint', img: 'assets/items/beer_pint.png', angry: true },
-      { name: 'Pool Cue', img: 'assets/items/pool_cue.png', angry: true },
-      { name: 'Mic', img: 'assets/items/mic.png', angry: true },
-      { name: 'Dancer', img: 'assets/items/dancer.png', angry: true },
-      { name: 'Boxing Glove', img: 'assets/items/boxing_glove.png', angry: false },
-      { name: 'Cheers', img: 'assets/items/cheers.png', angry: false },
-      { name: 'Slot Machine', img: 'assets/items/slot_machine.png', angry: true },
-      { name: 'Disco', img: 'assets/items/disco.png', angry: true },
-      { name: 'Salt Shaker', img: 'assets/items/salt_shaker.png', angry: false },
-      { name: 'Medal', img: 'assets/items/medal.png', angry: true },
+    triviaCategory: 14,
+    triviaDifficulty: 'hard',
+    insultContext: 'bar crawl',
+    fallbackInsults: [
+      'You ordered a vodka soda at a dive bar and wondered why everyone looked at you.',
+      'You lost at pool to someone who was using the wrong hand. Both hands.',
+      'You started a tab and disappeared. The bar still talks about you. Not fondly.',
+    ],
+  },
+  {
+    key: 'movies',
+    theme: '🎬 Movies',
+    label: 'Movies',
+    bgGradient: 'linear-gradient(135deg, #1a0a0a, #2e1a00)',
+    triviaCategory: 11,
+    triviaDifficulty: 'hard',
+    insultContext: 'mainstream Hollywood movies',
+    fallbackInsults: [
+      'You didn\'t know that? It was in the trailer. The first trailer.',
+      'My dog has seen that movie. My dog would have gotten that right.',
+      'That\'s not even close. That\'s not in the same zip code as close.',
+      'You absolute disappointment. Even your guess was lazy.',
     ],
   },
 ];
@@ -143,11 +191,32 @@ const state = {
   roundIndex: 0,
   beerBongCount: 0,
   playerName: '???',
-  itemsUsed: new Set(),
-  roundItems: [],
+  triviaQuestions: [],
+  currentQuestionIndex: 0,
+  wrongAnswers: 0,
   roundBeerBongTriggered: false,
-  beerBongTimeLimit: 5,
+  roundBeerBongCount: 0,
   safeStreak: 0,
+  answerLocked: false,
+  isRoundLoading: false,
+  insultToken: 0,
+  beerPong: {
+    phase: 'width',
+    shot: 1,
+    hits: 0,
+    widthValue: 0.5,
+    powerValue: 0.5,
+    lockedWidth: 0.5,
+    lockedPower: 0.5,
+    cupCount: 6,
+    rafId: null,
+    animationStart: 0,
+    shotResults: [],
+  },
+};
+
+const audioState = {
+  ctx: null,
 };
 
 const screens = {
@@ -162,15 +231,24 @@ const roundLabel = document.getElementById('round-label');
 const scoreDisplay = document.getElementById('score-display');
 const angerBar = document.getElementById('anger-bar');
 const speechBubble = document.getElementById('speech-bubble');
-const itemsGrid = document.getElementById('items-grid');
 const faceImg = document.getElementById('face-img');
 const faceEmoji = document.getElementById('face-emoji');
 const faceContainer = document.getElementById('face-container');
-
-const chugBar = document.getElementById('chug-bar');
-const beerBongTimer = document.getElementById('beerbong-timer');
-const beerFill = document.getElementById('beer-fill');
-const beerFoam = document.getElementById('beer-foam');
+const questionProgress = document.getElementById('question-progress');
+const wrongCounter = document.getElementById('wrong-counter');
+const comboCounter = document.getElementById('combo-counter');
+const questionText = document.getElementById('question-text');
+const answersGrid = document.getElementById('answers-grid');
+const buyBeerBtn = document.getElementById('buy-beer-btn');
+const cupRack = document.getElementById('cup-rack');
+const beerBongInstructions = document.getElementById('beerbong-instructions');
+const beerBongShotLabel = document.getElementById('beerbong-shot-label');
+const beerBongResultLabel = document.getElementById('beerbong-result-label');
+const widthIndicator = document.getElementById('width-indicator');
+const powerIndicator = document.getElementById('power-indicator');
+const widthLane = document.getElementById('width-lane');
+const powerLane = document.getElementById('power-lane');
+const beerBongActionBtn = document.getElementById('beerbong-action-btn');
 
 function showScreen(key) {
   Object.values(screens).forEach((screen) => screen.classList.remove('active'));
@@ -191,12 +269,23 @@ function shuffle(items) {
   return copy;
 }
 
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function decodeHtml(value) {
+  const textarea = document.createElement('textarea');
+  textarea.innerHTML = value;
+  return textarea.value;
+}
+
 function updateScore() {
   scoreDisplay.textContent = `Score: ${state.score}`;
+  buyBeerBtn.disabled = state.score < BUY_BEER_COST || state.answerLocked || state.isRoundLoading;
 }
 
 function updateAngerBar() {
-  const pct = Math.max(0, Math.min(100, state.angerPct));
+  const pct = clamp(state.angerPct, 0, 100);
   angerBar.style.width = `${pct}%`;
 }
 
@@ -243,42 +332,8 @@ function saveLeaderboard() {
   renderAllLeaderboards();
 }
 
-function normalizeItemName(name) {
-  return name.replace(/\s+/g, '').replace(/[^a-z0-9]/gi, '');
-}
-
-function getShortLabel(name) {
-  const words = name.split(/\s+/).filter(Boolean);
-  const initials = words.map((word) => word[0]).join('').slice(0, 3).toUpperCase();
-  return initials || name.slice(0, 3).toUpperCase();
-}
-
 function makeSvgDataUrl(svg) {
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
-}
-
-function getItemPlaceholder(item) {
-  const isRisky = Boolean(item.angry);
-  const gradientStart = isRisky ? '#7b1f1f' : '#0f4c3a';
-  const gradientEnd = isRisky ? '#d94848' : '#33a06f';
-  const label = item.name.slice(0, 14);
-  const badge = getShortLabel(item.name);
-  const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="${item.name}">
-      <defs>
-        <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="${gradientStart}"/>
-          <stop offset="100%" stop-color="${gradientEnd}"/>
-        </linearGradient>
-      </defs>
-      <rect x="3" y="3" width="114" height="114" rx="18" fill="url(#g)" stroke="rgba(255,255,255,0.35)" stroke-width="2"/>
-      <rect x="35" y="24" width="50" height="34" rx="12" fill="rgba(0,0,0,0.25)"/>
-      <text x="60" y="46" text-anchor="middle" fill="#fff" font-size="18" font-weight="700" font-family="Arial, sans-serif">${badge}</text>
-      <rect x="10" y="78" width="100" height="28" rx="10" fill="rgba(0,0,0,0.22)"/>
-      <text x="60" y="96" text-anchor="middle" fill="#fff" font-size="12" font-weight="600" font-family="Arial, sans-serif">${label}</text>
-    </svg>
-  `;
-  return makeSvgDataUrl(svg);
 }
 
 function getFacePlaceholder(faceState) {
@@ -301,67 +356,409 @@ function getFacePlaceholder(faceState) {
   return makeSvgDataUrl(svg);
 }
 
-function renderItems() {
-  itemsGrid.innerHTML = '';
-  const showHints = state.roundIndex === 0;
-  state.roundItems.forEach((item, index) => {
-    const btn = document.createElement('button');
-    btn.className = `item-btn${state.itemsUsed.has(index) ? ' used' : ''}`;
-    btn.type = 'button';
-    btn.onclick = () => useItem(index);
-    btn.title = item.tooltip || (item.angry ? 'Risky!' : 'Safe bet');
+function playSound(kind) {
+  try {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return;
+    if (!audioState.ctx) audioState.ctx = new AudioContextClass();
+    const ctx = audioState.ctx;
+    if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+    const oscillator = ctx.createOscillator();
+    const gain = ctx.createGain();
+    oscillator.connect(gain);
+    gain.connect(ctx.destination);
 
-    if (showHints) {
-      const hint = document.createElement('span');
-      hint.className = `item-hint ${item.angry ? 'risky' : 'safe'}`;
-      hint.textContent = item.angry ? '⚠' : '✓';
-      hint.setAttribute('aria-hidden', 'true');
-      btn.appendChild(hint);
-    }
-
-    const img = document.createElement('img');
-    img.src = item.img;
-    img.className = 'item-art';
-    img.alt = `${item.name} ${ITEM_FALLBACKS[normalizeItemName(item.name)] || ''}`.trim();
-
-    img.onerror = () => {
-      img.onerror = null;
-      img.src = getItemPlaceholder(item);
+    const now = ctx.currentTime;
+    const soundMap = {
+      correct: { type: 'sine', start: 660, end: 880, duration: 0.16, volume: 0.09 },
+      wrong: { type: 'square', start: 220, end: 140, duration: 0.22, volume: 0.08 },
+      splash: { type: 'triangle', start: 520, end: 340, duration: 0.18, volume: 0.09 },
     };
+    const config = soundMap[kind];
+    if (!config) return;
 
-    const label = document.createElement('span');
-    label.textContent = item.name;
+    oscillator.type = config.type;
+    oscillator.frequency.setValueAtTime(config.start, now);
+    oscillator.frequency.exponentialRampToValueAtTime(config.end, now + config.duration);
+    gain.gain.setValueAtTime(config.volume, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + config.duration);
+    oscillator.start(now);
+    oscillator.stop(now + config.duration);
+  } catch (error) {
+    // Ignore optional audio errors.
+  }
+}
 
-    btn.appendChild(img);
-    btn.appendChild(label);
-    itemsGrid.appendChild(btn);
+function updateComboCounter() {
+  if (state.safeStreak >= 3) {
+    comboCounter.classList.remove('hidden');
+    comboCounter.textContent = `🔥 ${state.safeStreak} combo`;
+  } else {
+    comboCounter.classList.add('hidden');
+  }
+}
+
+function triggerShake() {
+  faceContainer.classList.remove('shake');
+  void faceContainer.offsetWidth;
+  faceContainer.classList.add('shake');
+}
+
+function getFallbackInsult(roundData) {
+  const pool = roundData.fallbackInsults;
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function buildRoundIntro(roundData) {
+  return `Round ${state.roundIndex + 1}. Prove you know ${roundData.label.toLowerCase()}.`;
+}
+
+function normalizeTriviaQuestion(question) {
+  const correct = decodeHtml(question.correct_answer || question.correct);
+  const incorrectAnswers = (question.incorrect_answers || question.incorrect || []).map(decodeHtml);
+  const choices = shuffle([
+    { text: correct, correct: true },
+    ...incorrectAnswers.map((text) => ({ text, correct: false })),
+  ]);
+
+  return {
+    question: decodeHtml(question.question),
+    correctAnswer: correct,
+    choices,
+  };
+}
+
+function buildFallbackQuestions(roundData) {
+  const baseBank = shuffle(FALLBACK_TRIVIA[roundData.key] || []);
+  return Array.from({ length: QUESTION_COUNT }, (_, index) => {
+    const source = baseBank[index % baseBank.length];
+    return normalizeTriviaQuestion(source);
   });
 }
 
-function getResponse() {
-  const responses = ROUND_DATA[state.roundIndex].responses;
-  return responses[Math.floor(Math.random() * responses.length)];
+async function fetchRoundQuestions(roundData) {
+  const url = `https://opentdb.com/api.php?amount=${QUESTION_COUNT}&category=${roundData.triviaCategory}&difficulty=${roundData.triviaDifficulty}&type=multiple`;
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Trivia request failed with ${response.status}`);
+  }
+
+  const payload = await response.json();
+  if (!Array.isArray(payload.results) || payload.results.length < QUESTION_COUNT) {
+    throw new Error('Trivia API returned too few questions');
+  }
+
+  return payload.results.map(normalizeTriviaQuestion);
 }
 
-function loadRound() {
-  state.itemsUsed = new Set();
-  state.safeStreak = 0;
-  state.roundItems = shuffle(ROUND_DATA[state.roundIndex].items);
-  state.roundBeerBongTriggered = false;
+async function requestGroqInsult(roundData, difficulty, token) {
+  if (!GROQ_API_KEY) return;
+
+  try {
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${GROQ_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: GROQ_MODEL,
+        messages: [
+          {
+            role: 'user',
+            content: `You are a drill sergeant who is brutally mean but funny like Full Metal Jacket. The player just got a ${difficulty} ${roundData.insultContext} trivia question wrong. Give ONE savage, specific, funny insult in one sentence. No generic insults — make it specific to ${roundData.insultContext}. No profanity filters.`,
+          },
+        ],
+      }),
+    });
+
+    if (!response.ok) throw new Error(`Groq request failed with ${response.status}`);
+
+    const payload = await response.json();
+    const insult = payload.choices?.[0]?.message?.content?.trim();
+    if (insult && token === state.insultToken) {
+      speechBubble.textContent = insult.replace(/^"|"$/g, '');
+    }
+  } catch (error) {
+    // Fallback insult is already shown synchronously.
+  }
+}
+
+function renderQuestion() {
+  const totalQuestions = state.triviaQuestions.length || QUESTION_COUNT;
+  const currentNumber = Math.min(state.currentQuestionIndex + 1, totalQuestions);
+  questionProgress.textContent = `Question ${currentNumber}/${totalQuestions}`;
+  wrongCounter.textContent = `⚠ ${state.wrongAnswers}/${WRONG_LIMIT}`;
+  updateComboCounter();
+  updateScore();
+
+  if (state.isRoundLoading) {
+    questionText.textContent = 'Loading questions...';
+    answersGrid.innerHTML = '';
+    const loadingBtn = document.createElement('button');
+    loadingBtn.className = 'answer-btn loading';
+    loadingBtn.type = 'button';
+    loadingBtn.disabled = true;
+    loadingBtn.textContent = 'Fetching trivia…';
+    answersGrid.appendChild(loadingBtn);
+    return;
+  }
+
+  const currentQuestion = state.triviaQuestions[state.currentQuestionIndex];
+  if (!currentQuestion) return;
+
+  questionText.textContent = currentQuestion.question;
+  answersGrid.innerHTML = '';
+  currentQuestion.choices.forEach((choice, index) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'answer-btn';
+    button.textContent = choice.text;
+    button.disabled = state.answerLocked;
+    button.addEventListener('click', () => answerQuestion(index));
+    answersGrid.appendChild(button);
+  });
+}
+
+function applyAnswerState(buttonIndex, className) {
+  const buttons = [...answersGrid.querySelectorAll('.answer-btn')];
+  buttons.forEach((button) => {
+    button.disabled = true;
+  });
+  if (buttons[buttonIndex]) {
+    buttons[buttonIndex].classList.add(className);
+  }
+}
+
+function answerQuestion(index) {
+  if (state.answerLocked || state.isRoundLoading) return;
+
   const roundData = ROUND_DATA[state.roundIndex];
-  roundLabel.textContent = `Round ${state.roundIndex + 1}: ${roundData.theme}`;
-  screens.game.style.background = roundData.bgGradient || 'linear-gradient(135deg, #1a1a2e, #1a1a2e)';
-  speechBubble.textContent = getResponse();
-  renderItems();
+  const question = state.triviaQuestions[state.currentQuestionIndex];
+  const choice = question?.choices[index];
+  if (!choice) return;
+
+  state.answerLocked = true;
+  state.score += 50;
+  const effects = DIFFICULTY_EFFECTS[roundData.triviaDifficulty];
+
+  if (choice.correct) {
+    state.safeStreak += 1;
+    state.angerPct = clamp(state.angerPct + effects.correct, 0, 100);
+    applyAnswerState(index, 'correct');
+    playSound('correct');
+    const earnedComboBonus = state.safeStreak >= 3 && state.safeStreak % 3 === 0;
+    if (earnedComboBonus) {
+      state.score += 150;
+      speechBubble.textContent = `Smooth move. ${state.safeStreak} straight and +150.`;
+    } else {
+      speechBubble.textContent = 'Fine. You got one right.';
+    }
+  } else {
+    state.safeStreak = 0;
+    state.wrongAnswers += 1;
+    state.angerPct = clamp(state.angerPct + effects.wrong, 0, 100);
+    applyAnswerState(index, 'wrong');
+    triggerShake();
+    playSound('wrong');
+    speechBubble.textContent = getFallbackInsult(roundData);
+    const insultToken = state.insultToken + 1;
+    state.insultToken = insultToken;
+    requestGroqInsult(roundData, roundData.triviaDifficulty, insultToken);
+  }
+
   updateScore();
   updateAngerBar();
   updateFace();
+  updateComboCounter();
+
+  window.setTimeout(() => {
+    state.currentQuestionIndex += 1;
+    state.answerLocked = false;
+
+    if (state.wrongAnswers >= WRONG_LIMIT) {
+      startBeerBong();
+      return;
+    }
+
+    if (state.currentQuestionIndex >= state.triviaQuestions.length) {
+      nextRound();
+      return;
+    }
+
+    renderQuestion();
+  }, choice.correct ? 550 : 700);
+}
+
+function renderBeerPong() {
+  cupRack.innerHTML = '';
+  for (let i = 0; i < state.beerPong.cupCount; i += 1) {
+    const cup = document.createElement('div');
+    cup.className = 'cup';
+    cup.textContent = '🥤';
+    const shotResult = state.beerPong.shotResults[i];
+    if (shotResult === 'hit') cup.classList.add('sunk');
+    if (shotResult === 'miss') cup.classList.add('missed');
+    cupRack.appendChild(cup);
+  }
+
+  beerBongShotLabel.textContent = `Shot ${state.beerPong.shot} of 2`;
+  beerBongResultLabel.textContent = `Sinks: ${state.beerPong.hits}/2`;
+  widthLane.className = `aim-lane ${state.beerPong.phase === 'width' ? 'active-lane' : 'idle-lane'}`;
+  powerLane.className = `aim-lane ${state.beerPong.phase === 'power' ? 'active-lane' : 'idle-lane'}`;
+  widthIndicator.style.left = `${state.beerPong.widthValue * 100}%`;
+  powerIndicator.style.top = `${state.beerPong.powerValue * 100}%`;
+}
+
+function updateBeerPongAnimation(timestamp) {
+  if (!state.beerPong.animationStart) state.beerPong.animationStart = timestamp;
+
+  const elapsed = timestamp - state.beerPong.animationStart;
+  const speedMultiplier = Math.pow(1.15, state.roundIndex);
+  const cycleMs = (state.beerPong.phase === 'width' ? 1500 : 1200) / speedMultiplier;
+  const raw = (elapsed % cycleMs) / cycleMs;
+  const oscillatingValue = raw <= 0.5 ? raw * 2 : (1 - raw) * 2;
+
+  if (state.beerPong.phase === 'width') {
+    state.beerPong.widthValue = oscillatingValue;
+  } else {
+    state.beerPong.powerValue = oscillatingValue;
+  }
+
+  renderBeerPong();
+  state.beerPong.rafId = window.requestAnimationFrame(updateBeerPongAnimation);
+}
+
+function stopBeerPongAnimation() {
+  if (state.beerPong.rafId) {
+    window.cancelAnimationFrame(state.beerPong.rafId);
+    state.beerPong.rafId = null;
+  }
+}
+
+function resetBeerPongAnimation() {
+  stopBeerPongAnimation();
+  state.beerPong.animationStart = 0;
+  state.beerPong.rafId = window.requestAnimationFrame(updateBeerPongAnimation);
+}
+
+function finishBeerPongChallenge() {
+  stopBeerPongAnimation();
+  state.wrongAnswers = 0;
+  wrongCounter.textContent = `⚠ ${state.wrongAnswers}/${WRONG_LIMIT}`;
+
+  if (state.beerPong.hits === 2) {
+    state.score += 200;
+    state.angerPct = 0;
+    speechBubble.textContent = 'Beer pong clinic. He cooled all the way off.';
+  } else if (state.beerPong.hits === 1) {
+    state.score += 100;
+    state.angerPct = 40;
+    speechBubble.textContent = 'One cup saved you. He is still irritated.';
+  } else {
+    document.getElementById('gameover-score').textContent = `Final Score: ${state.score}`;
+    saveLeaderboard();
+    showScreen('gameover');
+    return;
+  }
+
+  updateScore();
+  updateAngerBar();
+  updateFace();
+  showScreen('game');
+
+  if (state.currentQuestionIndex >= state.triviaQuestions.length) {
+    nextRound();
+  } else {
+    renderQuestion();
+  }
+}
+
+function resolveBeerPongShot() {
+  const widthTolerance = Math.max(0.1, 0.18 - state.roundIndex * 0.01 - (6 - state.beerPong.cupCount) * 0.0125);
+  const powerTolerance = Math.max(0.1, 0.16 - state.roundIndex * 0.008);
+  const widthHit = Math.abs(state.beerPong.lockedWidth - 0.5) <= widthTolerance;
+  const powerHit = Math.abs(state.beerPong.lockedPower - 0.5) <= powerTolerance;
+  const hit = widthHit && powerHit;
+
+  state.beerPong.shotResults[state.beerPong.shot - 1] = hit ? 'hit' : 'miss';
+  if (hit) {
+    state.beerPong.hits += 1;
+    beerBongInstructions.textContent = 'Splash. That one dropped clean.';
+    playSound('splash');
+  } else {
+    const widthCall = state.beerPong.lockedWidth < 0.5 ? 'wide left' : 'wide right';
+    const powerCall = state.beerPong.lockedPower < 0.5 ? 'short' : 'long';
+    beerBongInstructions.textContent = `Missed it — ${widthCall} and ${powerCall}.`;
+  }
+
+  beerBongResultLabel.textContent = `Sinks: ${state.beerPong.hits}/2`;
+  renderBeerPong();
+
+  if (state.beerPong.shot >= 2) {
+    beerBongActionBtn.disabled = true;
+    window.setTimeout(() => {
+      beerBongActionBtn.disabled = false;
+      beerBongActionBtn.textContent = 'Lock Width';
+      finishBeerPongChallenge();
+    }, 650);
+    return;
+  }
+
+  state.beerPong.shot += 1;
+  state.beerPong.phase = 'width';
+  beerBongInstructions.textContent = 'Shot reset. Lock the width.';
+  beerBongActionBtn.textContent = 'Lock Width';
+  resetBeerPongAnimation();
+}
+
+function handleBeerPongAction() {
+  if (state.beerPong.phase === 'width') {
+    state.beerPong.lockedWidth = state.beerPong.widthValue;
+    state.beerPong.phase = 'power';
+    beerBongInstructions.textContent = 'Width locked. Now lock the depth.';
+    beerBongActionBtn.textContent = 'Lock Power';
+    resetBeerPongAnimation();
+    return;
+  }
+
+  state.beerPong.lockedPower = state.beerPong.powerValue;
+  stopBeerPongAnimation();
+  resolveBeerPongShot();
+}
+
+function startBeerBong() {
+  stopBeerPongAnimation();
+  state.beerBongCount += 1;
+  state.roundBeerBongTriggered = true;
+  const cupCount = Math.max(2, 6 - state.roundBeerBongCount * 2);
+  state.roundBeerBongCount += 1;
+  state.beerPong = {
+    phase: 'width',
+    shot: 1,
+    hits: 0,
+    widthValue: 0.5,
+    powerValue: 0.5,
+    lockedWidth: 0.5,
+    lockedPower: 0.5,
+    cupCount,
+    rafId: null,
+    animationStart: 0,
+    shotResults: [],
+  };
+
+  beerBongInstructions.textContent = 'Lock in the width first.';
+  beerBongActionBtn.textContent = 'Lock Width';
+  showScreen('beerbong');
+  renderBeerPong();
+  resetBeerPongAnimation();
 }
 
 function nextRound() {
+  stopBeerPongAnimation();
   state.score += 100;
   if (!state.roundBeerBongTriggered) state.score += 500;
-  state.angerPct = Math.max(0, state.angerPct - 15);
+  state.angerPct = clamp(state.angerPct - 15, 0, 100);
   state.roundIndex += 1;
 
   if (state.roundIndex >= ROUND_DATA.length) {
@@ -375,141 +772,72 @@ function nextRound() {
   loadRound();
 }
 
+async function loadRound() {
+  stopBeerPongAnimation();
+  state.safeStreak = 0;
+  state.currentQuestionIndex = 0;
+  state.wrongAnswers = 0;
+  state.roundBeerBongTriggered = false;
+  state.roundBeerBongCount = 0;
+  state.answerLocked = false;
+  state.isRoundLoading = true;
+  state.triviaQuestions = [];
+  const roundData = ROUND_DATA[state.roundIndex];
+
+  roundLabel.textContent = `Round ${state.roundIndex + 1}: ${roundData.theme}`;
+  screens.game.style.background = roundData.bgGradient || 'linear-gradient(135deg, #1a1a2e, #1a1a2e)';
+  speechBubble.textContent = buildRoundIntro(roundData);
+  updateScore();
+  updateAngerBar();
+  updateFace();
+  renderQuestion();
+
+  try {
+    state.triviaQuestions = await fetchRoundQuestions(roundData);
+  } catch (error) {
+    state.triviaQuestions = buildFallbackQuestions(roundData);
+    speechBubble.textContent = `${buildRoundIntro(roundData)} Trivia service blinked, so the backup questions are in.`;
+  } finally {
+    state.isRoundLoading = false;
+    renderQuestion();
+  }
+}
+
 function startGame() {
+  stopBeerPongAnimation();
   state.score = 0;
   state.angerPct = 0;
   state.roundIndex = 0;
   state.beerBongCount = 0;
   state.safeStreak = 0;
-  state.itemsUsed = new Set();
-  state.roundItems = [];
+  state.currentQuestionIndex = 0;
+  state.wrongAnswers = 0;
   state.playerName = sanitizeInitials(document.getElementById('initials').value);
   showScreen('game');
   loadRound();
 }
 
-let beerBongDrain = null;
-let beerBongTick = null;
-let beerBongStart = 0;
-let chugProgress = 0;
-let tapsNeeded = 10;
-
-function updateBeerFill() {
-  const minY = 11;
-  const maxY = 149;
-  const glassHeight = maxY - minY;
-  const ratio = Math.max(0, Math.min(1, chugProgress / tapsNeeded));
-  const fillHeight = Math.round(glassHeight * ratio);
-  const fillY = maxY - fillHeight;
-  const foamHeight = ratio > 0.8 ? Math.max(2, Math.round((ratio - 0.8) * 50)) : 0;
-  const foamY = fillY - foamHeight;
-  beerFill.setAttribute('y', `${fillY}`);
-  beerFill.setAttribute('height', `${fillHeight}`);
-  beerFoam.setAttribute('y', `${foamY}`);
-  beerFoam.setAttribute('height', `${foamHeight}`);
-}
-
-function endBeerBong(win) {
-  clearInterval(beerBongDrain);
-  clearInterval(beerBongTick);
-  if (win) {
-    const elapsed = (Date.now() - beerBongStart) / 1000;
-    const bonus = Math.max(0, Math.min(100, Math.round((state.beerBongTimeLimit - elapsed) * (100 / state.beerBongTimeLimit))));
-    state.score += 200 + bonus;
-    state.angerPct = 0;
-    updateScore();
-    updateAngerBar();
-    updateFace();
-    showScreen('game');
-    if (state.itemsUsed.size === state.roundItems.length) nextRound();
-  } else {
-    document.getElementById('gameover-score').textContent = `Final Score: ${state.score}`;
-    saveLeaderboard();
-    showScreen('gameover');
-  }
-}
-
-function startBeerBong() {
-  state.beerBongCount += 1;
-  state.roundBeerBongTriggered = true;
-  state.beerBongTimeLimit = Math.max(2.5, 5 - (state.beerBongCount - 1) * 0.25);
-  tapsNeeded = 10 + (state.beerBongCount - 1) * 2;
-  chugProgress = 0;
-  chugBar.style.width = '0%';
-  updateBeerFill();
-  beerBongTimer.textContent = `${state.beerBongTimeLimit.toFixed(1)}s`;
-  beerBongStart = Date.now();
-  showScreen('beerbong');
-
-  const chugBtn = document.getElementById('chug-btn');
-  chugBtn.onclick = () => {
-    chugProgress += 1;
-    const pct = Math.min(100, (chugProgress / tapsNeeded) * 100);
-    chugBar.style.width = `${pct}%`;
-    updateBeerFill();
-    if (chugProgress >= tapsNeeded) endBeerBong(true);
-  };
-
-  beerBongDrain = setInterval(() => {
-    chugProgress = Math.max(0, chugProgress - 0.07);
-    chugBar.style.width = `${Math.min(100, (chugProgress / tapsNeeded) * 100)}%`;
-    updateBeerFill();
-  }, 100);
-
-  beerBongTick = setInterval(() => {
-    const elapsed = (Date.now() - beerBongStart) / 1000;
-    const left = Math.max(0, state.beerBongTimeLimit - elapsed);
-    beerBongTimer.textContent = `${left.toFixed(1)}s`;
-    if (left <= 0) endBeerBong(false);
-  }, 100);
-}
-
-function useItem(index) {
-  if (state.itemsUsed.has(index)) return;
-
-  const item = state.roundItems[index];
-  let smoothMove = false;
-  state.itemsUsed.add(index);
-  state.score += 50;
-
-  if (item.angry) {
-    state.safeStreak = 0;
-    state.angerPct += 12 + state.roundIndex + Math.floor(Math.random() * 7);
-    faceContainer.classList.remove('shake');
-    void faceContainer.offsetWidth;
-    faceContainer.classList.add('shake');
-  } else {
-    state.safeStreak += 1;
-    if (state.safeStreak % 3 === 0) {
-      state.score += 150;
-      smoothMove = true;
-    }
-    state.angerPct += 4 + Math.floor(Math.random() * 5);
-  }
-
-  state.angerPct = Math.min(100, state.angerPct);
-  speechBubble.textContent = smoothMove ? 'SMOOTH MOVE! +150' : getResponse();
-
-  renderItems();
+function buyBeer() {
+  if (state.score < BUY_BEER_COST || state.answerLocked || state.isRoundLoading) return;
+  state.score -= BUY_BEER_COST;
+  state.angerPct = clamp(state.angerPct - BUY_BEER_ANGER_REDUCTION, 0, 100);
+  speechBubble.textContent = 'You bought him a beer. He is 20% less furious.';
   updateScore();
   updateAngerBar();
   updateFace();
-
-  if (state.angerPct >= 100) {
-    startBeerBong();
-    return;
-  }
-
-  if (state.itemsUsed.size === state.roundItems.length) {
-    nextRound();
-  }
 }
 
+beerBongActionBtn.addEventListener('click', handleBeerPongAction);
+buyBeerBtn.addEventListener('click', buyBeer);
 document.getElementById('start-btn').addEventListener('click', startGame);
 document.getElementById('retry-btn').addEventListener('click', () => showScreen('menu'));
 document.getElementById('play-again-btn').addEventListener('click', () => showScreen('menu'));
-document.getElementById('initials').addEventListener('input', (e) => {
-  e.target.value = sanitizeInitials(e.target.value);
+document.getElementById('initials').addEventListener('input', (event) => {
+  event.target.value = sanitizeInitials(event.target.value);
 });
 
 renderAllLeaderboards();
+updateScore();
+updateAngerBar();
+updateFace();
+renderQuestion();
