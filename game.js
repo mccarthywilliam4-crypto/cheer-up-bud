@@ -1,8 +1,8 @@
 const FACE_STATES = [
-  { max: 25, img: 'assets/face/annoyed.png', emoji: '😒' },
-  { max: 50, img: 'assets/face/angry.png', emoji: '😠' },
-  { max: 75, img: 'assets/face/fuming.png', emoji: '😡' },
-  { max: 100, img: 'assets/face/volcanic.png', emoji: '🤬' },
+  { max: 25, img: 'assets/face/annoyed.png', emoji: '😒', label: 'Annoyed', fallbackColor: '#f2c94c' },
+  { max: 50, img: 'assets/face/angry.png', emoji: '😠', label: 'Angry', fallbackColor: '#f2994a' },
+  { max: 75, img: 'assets/face/fuming.png', emoji: '😡', label: 'Fuming', fallbackColor: '#eb5757' },
+  { max: 100, img: 'assets/face/volcanic.png', emoji: '🤬', label: 'Volcanic', fallbackColor: '#a33cf2' },
 ];
 
 const ITEM_FALLBACKS = {
@@ -18,6 +18,7 @@ const ITEM_FALLBACKS = {
 const ROUND_DATA = [
   {
     theme: '🏒 Hockey',
+    bgGradient: 'linear-gradient(135deg, #0d1b2a, #1b4f72)',
     responses: ['Get that out of my face.', 'Seriously?', 'You call that a gift?', "I've seen better in peewee.", 'Go home.'],
     items: [
       { name: 'Hockey Stick', img: 'assets/items/hockey_stick.png', angry: true },
@@ -34,6 +35,7 @@ const ROUND_DATA = [
   },
   {
     theme: '🦌 Hunting',
+    bgGradient: 'linear-gradient(135deg, #1a2e1a, #4a3728)',
     responses: ["That's pathetic.", 'My gran hunts better than you.', 'Put that away.', "You're embarrassing yourself.", 'Leave.'],
     items: [
       { name: 'Deer', img: 'assets/items/deer.png', angry: true },
@@ -50,6 +52,7 @@ const ROUND_DATA = [
   },
   {
     theme: '🏕️ Camping',
+    bgGradient: 'linear-gradient(135deg, #0f1f0f, #2c3e1a)',
     responses: ['I hate the outdoors. And you.', 'Is this a joke?', "You're useless.", 'Go back to your tent.', 'No.'],
     items: [
       { name: 'Tent', img: 'assets/items/tent.png', angry: false },
@@ -66,6 +69,7 @@ const ROUND_DATA = [
   },
   {
     theme: '🚗 Cars',
+    bgGradient: 'linear-gradient(135deg, #1a1a1a, #2e2e2e)',
     responses: ['You know nothing about cars.', "Don't touch my garage.", 'Unbelievable.', 'Get out.', 'Amateur.'],
     items: [
       { name: 'Sports Car', img: 'assets/items/sports_car.png', angry: true },
@@ -82,6 +86,7 @@ const ROUND_DATA = [
   },
   {
     theme: '🌿 Weed',
+    bgGradient: 'linear-gradient(135deg, #1a0d2e, #2e1a0d)',
     responses: ["You're an idiot.", "This isn't helping.", 'Put that away.', "I'm not laughing.", 'Go away.'],
     items: [
       { name: 'Joint', img: 'assets/items/joint.png', angry: false },
@@ -98,6 +103,7 @@ const ROUND_DATA = [
   },
   {
     theme: '🎣 Fishing',
+    bgGradient: 'linear-gradient(135deg, #0d1f2e, #1a3a2a)',
     responses: ["That's the worst cast I've ever seen.", 'You scared the fish.', 'Useless.', "I'm done.", 'Go home.'],
     items: [
       { name: 'Fishing Rod', img: 'assets/items/fishing_rod.png', angry: false },
@@ -114,6 +120,7 @@ const ROUND_DATA = [
   },
   {
     theme: '🍺 Bar Crawl',
+    bgGradient: 'linear-gradient(135deg, #1a0a2e, #2e0a1a)',
     responses: ['You ruined my night.', 'I was having a perfectly bad time.', 'Get away from me.', 'Bartender, remove this person.', 'Nope.'],
     items: [
       { name: 'Beer Pint', img: 'assets/items/beer_pint.png', angry: true },
@@ -140,6 +147,7 @@ const state = {
   roundItems: [],
   roundBeerBongTriggered: false,
   beerBongTimeLimit: 5,
+  safeStreak: 0,
 };
 
 const screens = {
@@ -161,6 +169,8 @@ const faceContainer = document.getElementById('face-container');
 
 const chugBar = document.getElementById('chug-bar');
 const beerBongTimer = document.getElementById('beerbong-timer');
+const beerFill = document.getElementById('beer-fill');
+const beerFoam = document.getElementById('beer-foam');
 
 function showScreen(key) {
   Object.values(screens).forEach((screen) => screen.classList.remove('active'));
@@ -193,13 +203,12 @@ function updateAngerBar() {
 function updateFace() {
   const stateFace = FACE_STATES.find((entry) => state.angerPct <= entry.max) || FACE_STATES[3];
   faceEmoji.textContent = stateFace.emoji;
+  faceEmoji.style.display = 'none';
+  faceImg.style.display = 'block';
+  faceImg.alt = `${stateFace.label} face ${stateFace.emoji}`;
   faceImg.onerror = () => {
-    faceImg.style.display = 'none';
-    faceEmoji.style.display = 'block';
-  };
-  faceImg.onload = () => {
-    faceImg.style.display = 'block';
-    faceEmoji.style.display = 'none';
+    faceImg.onerror = null;
+    faceImg.src = getFacePlaceholder(stateFace);
   };
   faceImg.src = stateFace.img;
 }
@@ -238,32 +247,92 @@ function normalizeItemName(name) {
   return name.replace(/\s+/g, '').replace(/[^a-z0-9]/gi, '');
 }
 
+function getShortLabel(name) {
+  const words = name.split(/\s+/).filter(Boolean);
+  const initials = words.map((word) => word[0]).join('').slice(0, 3).toUpperCase();
+  return initials || name.slice(0, 3).toUpperCase();
+}
+
+function makeSvgDataUrl(svg) {
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+}
+
+function getItemPlaceholder(item) {
+  const isRisky = Boolean(item.angry);
+  const gradientStart = isRisky ? '#7b1f1f' : '#0f4c3a';
+  const gradientEnd = isRisky ? '#d94848' : '#33a06f';
+  const label = item.name.slice(0, 14);
+  const badge = getShortLabel(item.name);
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="${item.name}">
+      <defs>
+        <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="${gradientStart}"/>
+          <stop offset="100%" stop-color="${gradientEnd}"/>
+        </linearGradient>
+      </defs>
+      <rect x="3" y="3" width="114" height="114" rx="18" fill="url(#g)" stroke="rgba(255,255,255,0.35)" stroke-width="2"/>
+      <rect x="35" y="24" width="50" height="34" rx="12" fill="rgba(0,0,0,0.25)"/>
+      <text x="60" y="46" text-anchor="middle" fill="#fff" font-size="18" font-weight="700" font-family="Arial, sans-serif">${badge}</text>
+      <rect x="10" y="78" width="100" height="28" rx="10" fill="rgba(0,0,0,0.22)"/>
+      <text x="60" y="96" text-anchor="middle" fill="#fff" font-size="12" font-weight="600" font-family="Arial, sans-serif">${label}</text>
+    </svg>
+  `;
+  return makeSvgDataUrl(svg);
+}
+
+function getFacePlaceholder(faceState) {
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="${faceState.label} face">
+      <defs>
+        <radialGradient id="f" cx="35%" cy="30%" r="70%">
+          <stop offset="0%" stop-color="#ffe9cc"/>
+          <stop offset="100%" stop-color="${faceState.fallbackColor}"/>
+        </radialGradient>
+      </defs>
+      <circle cx="100" cy="100" r="94" fill="url(#f)" stroke="#1b1d2f" stroke-width="8"/>
+      <circle cx="70" cy="82" r="10" fill="#1b1d2f"/>
+      <circle cx="130" cy="82" r="10" fill="#1b1d2f"/>
+      <path d="M55 138 Q100 112 145 138" fill="none" stroke="#1b1d2f" stroke-width="9" stroke-linecap="round"/>
+      <path d="M50 58 Q70 44 88 58" fill="none" stroke="#1b1d2f" stroke-width="8" stroke-linecap="round"/>
+      <path d="M112 58 Q130 44 150 58" fill="none" stroke="#1b1d2f" stroke-width="8" stroke-linecap="round"/>
+    </svg>
+  `;
+  return makeSvgDataUrl(svg);
+}
+
 function renderItems() {
   itemsGrid.innerHTML = '';
+  const showHints = state.roundIndex === 0;
   state.roundItems.forEach((item, index) => {
     const btn = document.createElement('button');
     btn.className = `item-btn${state.itemsUsed.has(index) ? ' used' : ''}`;
     btn.type = 'button';
     btn.onclick = () => useItem(index);
+    btn.title = item.tooltip || (item.angry ? 'Risky!' : 'Safe bet');
+
+    if (showHints) {
+      const hint = document.createElement('span');
+      hint.className = `item-hint ${item.angry ? 'risky' : 'safe'}`;
+      hint.textContent = item.angry ? '⚠' : '✓';
+      hint.setAttribute('aria-hidden', 'true');
+      btn.appendChild(hint);
+    }
 
     const img = document.createElement('img');
     img.src = item.img;
-    img.alt = item.name;
-
-    const fallback = document.createElement('span');
-    fallback.className = 'item-fallback';
-    fallback.textContent = ITEM_FALLBACKS[normalizeItemName(item.name)] || '🎁';
+    img.className = 'item-art';
+    img.alt = `${item.name} ${ITEM_FALLBACKS[normalizeItemName(item.name)] || ''}`.trim();
 
     img.onerror = () => {
-      img.style.display = 'none';
-      fallback.style.display = 'block';
+      img.onerror = null;
+      img.src = getItemPlaceholder(item);
     };
 
     const label = document.createElement('span');
     label.textContent = item.name;
 
     btn.appendChild(img);
-    btn.appendChild(fallback);
     btn.appendChild(label);
     itemsGrid.appendChild(btn);
   });
@@ -276,9 +345,12 @@ function getResponse() {
 
 function loadRound() {
   state.itemsUsed = new Set();
+  state.safeStreak = 0;
   state.roundItems = shuffle(ROUND_DATA[state.roundIndex].items);
   state.roundBeerBongTriggered = false;
-  roundLabel.textContent = `Round ${state.roundIndex + 1}: ${ROUND_DATA[state.roundIndex].theme}`;
+  const roundData = ROUND_DATA[state.roundIndex];
+  roundLabel.textContent = `Round ${state.roundIndex + 1}: ${roundData.theme}`;
+  screens.game.style.background = roundData.bgGradient || 'linear-gradient(135deg, #1a1a2e, #1a1a2e)';
   speechBubble.textContent = getResponse();
   renderItems();
   updateScore();
@@ -308,6 +380,7 @@ function startGame() {
   state.angerPct = 0;
   state.roundIndex = 0;
   state.beerBongCount = 0;
+  state.safeStreak = 0;
   state.itemsUsed = new Set();
   state.roundItems = [];
   state.playerName = sanitizeInitials(document.getElementById('initials').value);
@@ -320,6 +393,21 @@ let beerBongTick = null;
 let beerBongStart = 0;
 let chugProgress = 0;
 let tapsNeeded = 10;
+
+function updateBeerFill() {
+  const minY = 11;
+  const maxY = 149;
+  const glassHeight = maxY - minY;
+  const ratio = Math.max(0, Math.min(1, chugProgress / tapsNeeded));
+  const fillHeight = Math.round(glassHeight * ratio);
+  const fillY = maxY - fillHeight;
+  const foamHeight = ratio > 0.8 ? Math.max(2, Math.round((ratio - 0.8) * 50)) : 0;
+  const foamY = fillY - foamHeight;
+  beerFill.setAttribute('y', `${fillY}`);
+  beerFill.setAttribute('height', `${fillHeight}`);
+  beerFoam.setAttribute('y', `${foamY}`);
+  beerFoam.setAttribute('height', `${foamHeight}`);
+}
 
 function endBeerBong(win) {
   clearInterval(beerBongDrain);
@@ -344,10 +432,11 @@ function endBeerBong(win) {
 function startBeerBong() {
   state.beerBongCount += 1;
   state.roundBeerBongTriggered = true;
-  state.beerBongTimeLimit = Math.max(2.5, 5 - (state.beerBongCount - 1) * 0.5);
-  tapsNeeded = 10 + (state.beerBongCount - 1) * 5;
+  state.beerBongTimeLimit = Math.max(2.5, 5 - (state.beerBongCount - 1) * 0.25);
+  tapsNeeded = 10 + (state.beerBongCount - 1) * 2;
   chugProgress = 0;
   chugBar.style.width = '0%';
+  updateBeerFill();
   beerBongTimer.textContent = `${state.beerBongTimeLimit.toFixed(1)}s`;
   beerBongStart = Date.now();
   showScreen('beerbong');
@@ -357,12 +446,14 @@ function startBeerBong() {
     chugProgress += 1;
     const pct = Math.min(100, (chugProgress / tapsNeeded) * 100);
     chugBar.style.width = `${pct}%`;
+    updateBeerFill();
     if (chugProgress >= tapsNeeded) endBeerBong(true);
   };
 
   beerBongDrain = setInterval(() => {
-    chugProgress = Math.max(0, chugProgress - 0.12);
+    chugProgress = Math.max(0, chugProgress - 0.07);
     chugBar.style.width = `${Math.min(100, (chugProgress / tapsNeeded) * 100)}%`;
+    updateBeerFill();
   }, 100);
 
   beerBongTick = setInterval(() => {
@@ -377,20 +468,27 @@ function useItem(index) {
   if (state.itemsUsed.has(index)) return;
 
   const item = state.roundItems[index];
+  let smoothMove = false;
   state.itemsUsed.add(index);
   state.score += 50;
 
   if (item.angry) {
-    state.angerPct += 18 + (state.roundIndex * 2) + Math.floor(Math.random() * 9);
+    state.safeStreak = 0;
+    state.angerPct += 12 + state.roundIndex + Math.floor(Math.random() * 7);
     faceContainer.classList.remove('shake');
     void faceContainer.offsetWidth;
     faceContainer.classList.add('shake');
   } else {
+    state.safeStreak += 1;
+    if (state.safeStreak % 3 === 0) {
+      state.score += 150;
+      smoothMove = true;
+    }
     state.angerPct += 4 + Math.floor(Math.random() * 5);
   }
 
   state.angerPct = Math.min(100, state.angerPct);
-  speechBubble.textContent = getResponse();
+  speechBubble.textContent = smoothMove ? 'SMOOTH MOVE! +150' : getResponse();
 
   renderItems();
   updateScore();

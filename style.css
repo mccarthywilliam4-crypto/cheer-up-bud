@@ -24,6 +24,10 @@ body {
 .screen {
   display: none;
   min-height: calc(100vh - 32px);
+  background: #1a1a2e;
+  border-radius: 14px;
+  padding: 12px;
+  transition: background 0.5s ease;
 }
 
 .screen.active {
@@ -134,6 +138,7 @@ button {
 }
 
 .item-btn {
+  position: relative;
   padding: 8px 4px;
   background: #2a2d49;
   border: 1px solid #3f4468;
@@ -148,15 +153,37 @@ button {
   gap: 4px;
 }
 
-.item-btn img {
-  width: 30px;
-  height: 30px;
+.item-art {
+  width: 40px;
+  height: 40px;
   object-fit: contain;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-.item-fallback {
-  font-size: 24px;
-  display: none;
+.item-hint {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
+}
+
+.item-hint.risky {
+  background: #d64545;
+}
+
+.item-hint.safe {
+  background: #2a9d62;
 }
 
 .item-btn.used {
@@ -174,6 +201,26 @@ button {
   margin-top: auto;
   padding: 20px;
   font-size: 24px;
+}
+
+#screen-beerbong {
+  background: #1a0e05;
+}
+
+#screen-beerbong .chug-wrap {
+  display: none;
+}
+
+.beer-glass-wrap {
+  width: 170px;
+  margin: 0 auto;
+}
+
+.beer-glass {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.35));
 }
 
 .leaderboard-card {
