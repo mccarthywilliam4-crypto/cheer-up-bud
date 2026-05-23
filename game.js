@@ -1,5 +1,5 @@
 const GROQ_API_KEY = ''; // Add your Groq API key here to enable AI-generated insults.
-const QUESTION_COUNT = 10;
+const QUESTION_COUNT = 7;
 const WRONG_LIMIT = 3;
 const BUY_BEER_COST = 200;
 const BUY_BEER_ANGER_REDUCTION = 20;
@@ -13,10 +13,73 @@ const FACE_STATES = [
 ];
 
 const DIFFICULTY_EFFECTS = {
-  easy: { wrong: 25, correct: -3 },
-  medium: { wrong: 18, correct: -6 },
-  hard: { wrong: 10, correct: -10 },
+  easy: { wrong: 15, correct: -3 },
+  medium: { wrong: 12, correct: -6 },
+  hard: { wrong: 8, correct: -10 },
 };
+
+const CORRECT_RESPONSES = [
+  "Fine. You got one right. Don't cream yourself about it.",
+  "Okay, that one counts. Barely.",
+  "Lucky guess. We both know it was a lucky guess.",
+  "Wow, you actually knew that. I'm genuinely shocked.",
+  "One right answer doesn't make you smart. Just so we're clear.",
+  "Alright, I'll give you that one. Don't get used to it.",
+  "Even a broken clock. You know the rest.",
+  "Got it right. Good for you. Moving on.",
+];
+
+const IDLE_TAUNTS = [
+  "You gonna stare at it all day or actually pick?",
+  "Pick a damn answer. We don't have all night.",
+  "My dead uncle could've answered faster.",
+  "Bro it's multiple choice. Four options. Pick one.",
+  "You're really sitting here like one of these is gonna get easier.",
+  "At this rate I'm aging in real time.",
+  "Just pick the wrong one and get it over with.",
+  "The suspense would be more impressive if you weren't clearly stumped.",
+];
+
+const ROUND_END_JABS = [
+  "Barely survived that one.",
+  "You scraped through like toilet paper on a bad day.",
+  "That round was embarrassing but somehow you're still breathing.",
+  "Lucky. Don't confuse that with skill.",
+  "Alright, you made it. Try not to humiliate yourself next round.",
+  "You played like shit but you got away with it. This time.",
+];
+
+const WIN_ENDINGS = [
+  "...I guess you're ok.",
+  "Fine. You're not completely useless.",
+  "You actually did it. I genuinely didn't think you had it in you.",
+  "Alright, I'll admit it. That wasn't terrible.",
+];
+
+const BUY_BEER_MSGS = [
+  "Buying your way out. Typical. At least you're consistent at quitting.",
+  "Just spent 200 points on a beer because you can't answer trivia. Pathetic.",
+  "Nice, now he's 20% less pissed. Still thinks you're an idiot though.",
+];
+
+const BEER_PONG_HIT_MSGS = [
+  "Lucky. Don't get smug. You've thrown 40 air balls before.",
+  "Holy shit, it went in. Even you can't believe that.",
+  "Somehow that worked. You have no idea how.",
+];
+
+const BEER_PONG_MISS_MSGS = [
+  "You couldn't sink that if the cup was the size of a kiddie pool. Go sit down.",
+  "My mom throws better than that. Both arms.",
+  "Missed it. Didn't even graze it. Embarrassing.",
+  "Air ball. At beer pong. Are you kidding me?",
+];
+
+const BEER_PONG_RESET_MSGS = [
+  "Don't choke again. Try to aim this time.",
+  "Shot reset. Try not to embarrass yourself.",
+  "One more shot. Make it count for once.",
+];
 
 const FALLBACK_TRIVIA = {
   hockey: [
@@ -49,35 +112,30 @@ const FALLBACK_TRIVIA = {
     { question: 'What\'s it called when you finish a hole in one less than par?', correct: 'Birdie', incorrect: ['Bogey', 'Eagle eye', 'Hat trick'] },
     { question: 'What is the smooth area with the hole and flag called?', correct: 'The green', incorrect: ['The rink', 'The pit lane', 'The infield'] },
   ],
-  camping: [
-    { question: 'You pull up to camp first thing — what do you set up before anything else?', correct: 'The tent', incorrect: ['The karaoke speaker', 'The hammock over rocks', 'A card table bar'] },
-    { question: 'What should stay zipped up unless you want raccoons throwing a party?', correct: 'Your food', incorrect: ['Your socks', 'Your flashlight', 'Your camp chair'] },
-    { question: 'What actually gets a fire going quick without drama?', correct: 'Matches or a lighter', incorrect: ['A leaf blower', 'A phone flashlight', 'A can opener'] },
-    { question: 'When it gets dark on a trail, what are you happy you packed?', correct: 'A flashlight', incorrect: ['A mirror ball', 'A laptop stand', 'A waffle iron'] },
-  ],
-  cars: [
+  guysAndGear: [
     { question: 'If the check engine light pops on, what is your car telling you?', correct: 'Something needs attention', incorrect: ['Bass is too loud', 'You unlocked sport mode', 'You won a free wash'] },
     { question: 'Which pedal actually slows the car down?', correct: 'Brake', incorrect: ['Gas', 'Floor pedal', 'Horn pedal'] },
     { question: 'What fluid do you check so your engine doesn\'t cook itself?', correct: 'Oil', incorrect: ['Soda', 'Coolant cologne', 'Window tint fluid'] },
     { question: 'What tool are you grabbing to loosen a stubborn bolt?', correct: 'A wrench', incorrect: ['A spatula', 'A paintbrush', 'A tape measure'] },
+    { question: 'What do you call the spare tire most cars keep in the trunk?', correct: 'A donut', incorrect: ['A retreader', 'A floater', 'A backup rim'] },
+    { question: 'What number on the pump tells you the octane rating?', correct: '87, 89, or 93', incorrect: ['12, 14, or 16', 'The color of the nozzle', 'The MPG sticker'] },
   ],
-  weed: [
+  nightOut: [
     { question: 'What do most people use to light up a joint?', correct: 'A lighter', incorrect: ['A wrench', 'A stapler', 'A TV remote'] },
     { question: 'What snack shows up first when the munchies hit?', correct: 'Pizza', incorrect: ['Plain celery', 'Unseasoned tofu', 'Ice cubes'] },
     { question: 'If your eyes get red, what helps fast?', correct: 'Eye drops', incorrect: ['Motor oil', 'Sunscreen', 'Brake cleaner'] },
     { question: 'An edible is basically what?', correct: 'Cannabis in food', incorrect: ['A new grinder brand', 'A rolling paper size', 'A strain of grass seed'] },
-  ],
-  barCrawl: [
     { question: 'Starting a tab means what?', correct: 'You open a running bill', incorrect: ['You call an Uber', 'You reserve the jukebox', 'You pre-order tacos'] },
     { question: 'Before you leave, what do you need to do with that tab?', correct: 'Close it out', incorrect: ['Hide from the bartender', 'Switch bars and hope', 'Pay next week'] },
     { question: 'What game are you probably playing if someone yells "bank shot!"?', correct: 'Pool', incorrect: ['Bowling', 'Foosball golf', 'Table shuffle tennis'] },
     { question: 'Who actually pours the drinks all night?', correct: 'The bartender', incorrect: ['The bouncer', 'The DJ', 'The karaoke host'] },
   ],
-  movies: [
+  popCulture: [
     { question: 'Explosions, car chases, and fistfights usually means what genre?', correct: 'Action', incorrect: ['Documentary', 'Rom-com', 'Cooking show'] },
     { question: 'If the whole theater is laughing, you probably picked what?', correct: 'Comedy', incorrect: ['Horror', 'War drama', 'Silent thriller'] },
     { question: 'A trailer is there to do what?', correct: 'Preview the movie', incorrect: ['Show bloopers only', 'Spoil the ending', 'List actor salaries'] },
     { question: 'If your buddy says "that ending messed me up," what genre is likely?', correct: 'Thriller', incorrect: ['Sports recap', 'Game show', 'Nature tour'] },
+    { question: 'What do you call the list of everyone who worked on a movie at the end?', correct: 'The credits', incorrect: ['The recap', 'The epilogue', 'The rundown'] },
   ],
 };
 
@@ -91,9 +149,10 @@ const ROUND_DATA = [
     triviaDifficulty: 'easy',
     insultContext: 'hockey',
     fallbackInsults: [
-      'You handle a stick like it personally offended you and you\'re losing the argument.',
-      'Peewee players skate backwards faster than you move forward in life.',
-      'The only thing you\'ve ever scored is a pity invite to the game.',
+      "Are you fucking serious? My grandmother knows what a puck is.",
+      "You've been to zero games, owned zero jerseys, and somehow know zero facts. Impressive commitment to ignorance.",
+      "Hockey's played on ice, not in your head. Clearly.",
+      "Even the Zamboni driver would've gotten that right.",
     ],
   },
   {
@@ -105,9 +164,10 @@ const ROUND_DATA = [
     triviaDifficulty: 'easy',
     insultContext: 'football',
     fallbackInsults: [
-      'You read that play like a guy watching football through a keyhole.',
-      'You had one job and still got tackled by the question.',
-      'You just fumbled trivia in open field with nobody around.',
+      "That was the mental equivalent of throwing a pick-six in your own end zone.",
+      "You just fumbled the easiest trivia question known to man. Congratulations.",
+      "Bro, you picked that answer like you've never seen a football in your life.",
+      "Wide open field, nobody around, and you still tripped over yourself.",
     ],
   },
   {
@@ -119,9 +179,10 @@ const ROUND_DATA = [
     triviaDifficulty: 'easy',
     insultContext: 'baseball',
     fallbackInsults: [
-      'That answer swung so late it missed yesterday.',
-      'You just struck out looking at a tee-ball question.',
-      'Even the bullpen is laughing at that guess.',
+      "My guy couldn't hit that answer with a fucking boat oar.",
+      "That swing was so late the at-bat ended last Tuesday.",
+      "You struck out looking. At a tee-ball question. Go sit down.",
+      "Even the bullpen is laughing at that guess.",
     ],
   },
   {
@@ -133,9 +194,10 @@ const ROUND_DATA = [
     triviaDifficulty: 'easy',
     insultContext: 'basketball',
     fallbackInsults: [
-      'That answer hit backboard, rim, and somehow your own ego.',
-      'You bricked that one so hard the whole gym heard it.',
-      'Wide open layup and you still missed.',
+      "You bricked that so hard the backboard filed a restraining order.",
+      "Wide open layup. No defender within five miles. Still missed. How?",
+      "That answer was uglier than a Charles Barkley jumpshot.",
+      "You just airballed trivia. That takes a special kind of talent.",
     ],
   },
   {
@@ -147,80 +209,55 @@ const ROUND_DATA = [
     triviaDifficulty: 'easy',
     insultContext: 'golf',
     fallbackInsults: [
-      'That answer sliced straight into the parking lot.',
-      'You just four-putted from two feet in trivia form.',
-      'Even your caddie would tell you to put the pencil down.',
+      "That answer sliced out of bounds into the fucking parking lot. 10-stroke penalty.",
+      "You just four-putted from two feet in trivia form. Unbelievable.",
+      "Even the cart girl stopped to watch that disaster unfold.",
+      "Your caddie would've quit on the spot after that guess.",
     ],
   },
   {
-    key: 'camping',
-    theme: '🏕️ Camping',
-    label: 'Camping',
-    bgGradient: 'linear-gradient(135deg, #0f1f0f, #2c3e1a)',
-    triviaCategory: 9,
-    triviaDifficulty: 'medium',
-    insultContext: 'camping',
-    fallbackInsults: [
-      'You packed vibes and forgot common sense. Again.',
-      'A squirrel has better survival instincts than that answer.',
-      'You couldn\'t find camp if it was pinned on your map app.',
-    ],
-  },
-  {
-    key: 'cars',
-    theme: '🚗 Cars',
-    label: 'Cars',
+    key: 'guysAndGear',
+    theme: '🚗 Guys & Gear',
+    label: 'Guys & Gear',
     bgGradient: 'linear-gradient(135deg, #1a1a1a, #2e2e2e)',
-    triviaCategory: 28,
+    triviaCategory: [28, 9],
     triviaDifficulty: 'medium',
-    insultContext: 'cars',
+    insultContext: 'cars and general knowledge',
     fallbackInsults: [
-      'You put premium in a 2003 Civic and felt good about yourself. Sit down.',
-      'The check engine light isn\'t a suggestion, genius. It\'s been on for two years.',
-      'You rev it at a red light like anyone is impressed. Nobody is impressed.',
+      "You drive a 2012 Civic and act like you know cars. You don't know shit about cars.",
+      "Bro the check engine light has been on since Obama was president. Deal with it.",
+      "You just proved that knowing how to drive and knowing anything about cars are completely different skills.",
+      "You put premium in a beater and felt good about yourself. That's not how any of this works.",
     ],
   },
   {
-    key: 'weed',
-    theme: '🌿 Weed',
-    label: 'Weed',
+    key: 'nightOut',
+    theme: '🌿 Night Out',
+    label: 'Night Out',
     bgGradient: 'linear-gradient(135deg, #1a0d2e, #0d2e1a)',
     triviaCategory: 9,
     triviaDifficulty: 'medium',
-    insultContext: 'weed',
+    insultContext: 'bars and going out',
     fallbackInsults: [
-      'You greened out on two hits and told everyone you were \"just tired.\" We know.',
-      'You called it a \"vibe\" three times in one sentence. The vibe is you\'re an idiot.',
-      'You\'ve been \"about to clean your piece\" for four months. It\'s basically a biohazard.',
+      "You've been stoned since 2019 and still got that wrong. Impressive.",
+      "This is bar trivia and you just lost to the guy who's been blacked out since 8pm.",
+      "That answer was stupider than ordering a Bud Light at a craft beer bar.",
+      "You greened out on two hits and told everyone you were just tired. We know.",
     ],
   },
   {
-    key: 'barCrawl',
-    theme: '🍺 Bar Crawl',
-    label: 'Bar Crawl',
-    bgGradient: 'linear-gradient(135deg, #1a0a00, #3a1f00)',
-    triviaCategory: 9,
-    triviaDifficulty: 'hard',
-    insultContext: 'bar crawl',
-    fallbackInsults: [
-      'You ordered a vodka soda at a dive bar and wondered why everyone looked at you.',
-      'You lost at pool to someone who was using the wrong hand. Both hands.',
-      'You started a tab and disappeared. The bar still talks about you. Not fondly.',
-    ],
-  },
-  {
-    key: 'movies',
-    theme: '🎬 Movies',
-    label: 'Movies',
+    key: 'popCulture',
+    theme: '🎬 Pop Culture',
+    label: 'Pop Culture',
     bgGradient: 'linear-gradient(135deg, #1a0a0a, #2e1a00)',
     triviaCategory: 11,
-    triviaDifficulty: 'hard',
-    insultContext: 'mainstream Hollywood movies',
+    triviaDifficulty: 'medium',
+    insultContext: 'movies and pop culture',
     fallbackInsults: [
-      'You didn\'t know that? It was in the trailer. The first trailer.',
-      'My dog has seen that movie. My dog would have gotten that right.',
-      'That\'s not even close. That\'s not in the same zip code as close.',
-      'You absolute disappointment. Even your guess was lazy.',
+      "You didn't know that? It was literally in the fucking trailer.",
+      "My dog has seen that movie. My dog got it right. You are dumber than my dog.",
+      "That's not even close, man. That's not in the same zip code as close.",
+      "You absolute disappointment. Even your guess was lazy.",
     ],
   },
 ];
@@ -241,19 +278,19 @@ const state = {
   isRoundLoading: false,
   insultToken: 0,
   beerPong: {
-    phase: 'width',
+    phase: 'aiming',
     shot: 1,
     hits: 0,
-    widthValue: 0.5,
-    powerValue: 0.5,
-    lockedWidth: 0.5,
-    lockedPower: 0.5,
+    aimX: 0.5,
+    aimY: 0.5,
     cupCount: 6,
     rafId: null,
     animationStart: 0,
     shotResults: [],
   },
 };
+
+let idleTauntTimer = null;
 
 const audioState = {
   ctx: null,
@@ -477,7 +514,11 @@ function buildFallbackQuestions(roundData) {
 }
 
 async function fetchRoundQuestions(roundData) {
-  const url = `https://opentdb.com/api.php?amount=${QUESTION_COUNT}&category=${roundData.triviaCategory}&difficulty=${roundData.triviaDifficulty}&type=multiple`;
+  const categories = Array.isArray(roundData.triviaCategory)
+    ? roundData.triviaCategory
+    : [roundData.triviaCategory];
+  const category = categories[Math.floor(Math.random() * categories.length)];
+  const url = `https://opentdb.com/api.php?amount=${QUESTION_COUNT}&category=${category}&difficulty=${roundData.triviaDifficulty}&type=multiple`;
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`Trivia request failed with ${response.status}`);
@@ -506,7 +547,7 @@ async function requestGroqInsult(roundData, difficulty, token) {
         messages: [
           {
             role: 'user',
-            content: `You are a drill sergeant who is brutally mean but funny like Full Metal Jacket. The player just got a ${difficulty} ${roundData.insultContext} trivia question wrong. Give ONE savage, specific, funny insult in one sentence. No generic insults — make it specific to ${roundData.insultContext}. No profanity filters.`,
+            content: `You are a brutally funny, crass best friend who loves to roast people. Not mean-spirited, just balls-to-the-wall funny. Think group chat energy. Profanity is encouraged. The player just got a ${difficulty} ${roundData.insultContext} trivia question wrong. Give ONE savage, specific, funny roast in one or two sentences. Make it specific to ${roundData.insultContext}. No softening, no asterisks.`,
           },
         ],
       }),
@@ -522,6 +563,22 @@ async function requestGroqInsult(roundData, difficulty, token) {
   } catch (error) {
     // Fallback insult is already shown synchronously.
   }
+}
+
+function clearIdleTimer() {
+  if (idleTauntTimer) {
+    window.clearInterval(idleTauntTimer);
+    idleTauntTimer = null;
+  }
+}
+
+function startIdleTimer() {
+  clearIdleTimer();
+  idleTauntTimer = window.setInterval(() => {
+    if (!state.answerLocked && !state.isRoundLoading) {
+      speechBubble.textContent = IDLE_TAUNTS[Math.floor(Math.random() * IDLE_TAUNTS.length)];
+    }
+  }, 5000);
 }
 
 function renderQuestion() {
@@ -558,6 +615,7 @@ function renderQuestion() {
     button.addEventListener('click', () => answerQuestion(index));
     answersGrid.appendChild(button);
   });
+  startIdleTimer();
 }
 
 function applyAnswerState(buttonIndex, className, correctIndex = -1) {
@@ -576,6 +634,8 @@ function applyAnswerState(buttonIndex, className, correctIndex = -1) {
 function answerQuestion(index) {
   if (state.answerLocked || state.isRoundLoading) return;
 
+  clearIdleTimer();
+
   const roundData = ROUND_DATA[state.roundIndex];
   const question = state.triviaQuestions[state.currentQuestionIndex];
   const choice = question?.choices[index];
@@ -593,9 +653,9 @@ function answerQuestion(index) {
     const earnedComboBonus = state.safeStreak >= 3 && state.safeStreak % 3 === 0;
     if (earnedComboBonus) {
       state.score += 150;
-      speechBubble.textContent = `Smooth move. ${state.safeStreak} straight and +150.`;
+      speechBubble.textContent = `${state.safeStreak} in a row? Don't cream yourself, it's trivia. +150 anyway.`;
     } else {
-      speechBubble.textContent = 'Fine. You got one right.';
+      speechBubble.textContent = CORRECT_RESPONSES[Math.floor(Math.random() * CORRECT_RESPONSES.length)];
     }
   } else {
     state.safeStreak = 0;
@@ -661,30 +721,26 @@ function renderBeerPong() {
 
   beerBongShotLabel.textContent = `Shot ${state.beerPong.shot} of 2`;
   beerBongResultLabel.textContent = `Sinks: ${state.beerPong.hits}/2`;
-  aimCursor.style.left = `${state.beerPong.widthValue * 100}%`;
-  aimCursor.style.top = `${state.beerPong.powerValue * 100}%`;
+  aimCursor.style.left = `${state.beerPong.aimX * 100}%`;
+  aimCursor.style.top = `${state.beerPong.aimY * 100}%`;
 }
 
 function updateBeerPongAnimation(timestamp) {
   if (!state.beerPong.animationStart) state.beerPong.animationStart = timestamp;
 
   const elapsed = timestamp - state.beerPong.animationStart;
-  const speedMultiplier = Math.pow(1.12, state.roundIndex);
-  const widthCycleMs = 1500 / speedMultiplier;
-  const powerCycleMs = 1300 / speedMultiplier;
-  const widthRaw = (elapsed % widthCycleMs) / widthCycleMs;
-  const powerRaw = ((elapsed + 300) % powerCycleMs) / powerCycleMs;
-  const oscillatingWidth = widthRaw <= 0.5 ? widthRaw * 2 : (1 - widthRaw) * 2;
-  const oscillatingPower = powerRaw <= 0.5 ? powerRaw * 2 : (1 - powerRaw) * 2;
+  const speedMultiplier = Math.pow(1.08, state.roundIndex);
+  const xCycleMs = 1400 / speedMultiplier;
+  const yCycleMs = 1100 / speedMultiplier;
+  const xRaw = (elapsed % xCycleMs) / xCycleMs;
+  const yRaw = ((elapsed + 400) % yCycleMs) / yCycleMs;
 
-  if (state.beerPong.phase === 'width') {
-    state.beerPong.widthValue = oscillatingWidth;
-  } else if (state.beerPong.phase === 'power') {
-    state.beerPong.widthValue = state.beerPong.lockedWidth;
-  }
-  state.beerPong.powerValue = oscillatingPower;
+  state.beerPong.aimX = xRaw <= 0.5 ? xRaw * 2 : (1 - xRaw) * 2;
+  state.beerPong.aimY = yRaw <= 0.5 ? yRaw * 2 : (1 - yRaw) * 2;
 
-  renderBeerPong();
+  aimCursor.style.left = `${state.beerPong.aimX * 100}%`;
+  aimCursor.style.top = `${state.beerPong.aimY * 100}%`;
+
   state.beerPong.rafId = window.requestAnimationFrame(updateBeerPongAnimation);
 }
 
@@ -709,11 +765,11 @@ function finishBeerPongChallenge() {
   if (state.beerPong.hits === 2) {
     state.score += 200;
     state.angerPct = 0;
-    speechBubble.textContent = 'Beer pong clinic. He cooled all the way off.';
+    speechBubble.textContent = "Holy shit, two cups. He actually calmed down. Don't let it go to your head.";
   } else if (state.beerPong.hits === 1) {
     state.score += 100;
     state.angerPct = 40;
-    speechBubble.textContent = 'One cup saved you. He is still irritated.';
+    speechBubble.textContent = "One cup barely saved your ass. He's still pissed, just less.";
   } else {
     document.getElementById('gameover-score').textContent = `Final Score: ${state.score}`;
     saveLeaderboard();
@@ -733,60 +789,54 @@ function finishBeerPongChallenge() {
   }
 }
 
-function getNearestCupIndex(targetX, targetY) {
+function resolveBeerPongShot() {
+  state.beerPong.phase = 'resolving';
+  beerBongActionBtn.disabled = true;
+
+  // Tolerance shrinks as rounds progress: generous early, tighter later
+  const tolerance = Math.max(0.14, 0.30 - state.roundIndex * 0.022);
+
   const tableRect = beerBongTable.getBoundingClientRect();
-  const targetClientX = tableRect.left + tableRect.width * targetX;
-  const targetClientY = tableRect.top + tableRect.height * targetY;
+  const shotClientX = tableRect.left + tableRect.width * state.beerPong.aimX;
+  const shotClientY = tableRect.top + tableRect.height * state.beerPong.aimY;
+
   const remainingCups = [...cupRack.querySelectorAll('.cup:not(.sunk)')];
-
-  if (!remainingCups.length) return -1;
-
-  let nearestIndex = Number(remainingCups[0].dataset.cupIndex);
-  let nearestDistance = Number.POSITIVE_INFINITY;
+  let hitCupIndex = -1;
+  let bestNormDist = Number.POSITIVE_INFINITY;
 
   remainingCups.forEach((cup) => {
     const rect = cup.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
-    const distance = Math.hypot(centerX - targetClientX, centerY - targetClientY);
-    if (distance < nearestDistance) {
-      nearestDistance = distance;
-      nearestIndex = Number(cup.dataset.cupIndex);
+    const normDist = Math.hypot(
+      (centerX - shotClientX) / tableRect.width,
+      (centerY - shotClientY) / tableRect.height
+    );
+    if (normDist < bestNormDist) {
+      bestNormDist = normDist;
+      hitCupIndex = Number(cup.dataset.cupIndex);
     }
   });
 
-  return Number.isFinite(nearestIndex) ? nearestIndex : -1;
-}
+  const hit = bestNormDist <= tolerance && hitCupIndex >= 0;
+  if (!hit) hitCupIndex = -1;
 
-function resolveBeerPongShot() {
-  state.beerPong.phase = 'resolving';
-  beerBongActionBtn.disabled = true;
-
-  const widthTolerance = Math.max(0.1, 0.2 - state.roundIndex * 0.01 - (6 - state.beerPong.cupCount) * 0.0125);
-  const powerTolerance = Math.max(0.08, 0.17 - state.roundIndex * 0.008);
-  const widthHit = Math.abs(state.beerPong.lockedWidth - 0.5) <= widthTolerance;
-  const powerHit = Math.abs(state.beerPong.lockedPower - 0.24) <= powerTolerance;
-  const hit = widthHit && powerHit;
-  const cupIndex = hit ? getNearestCupIndex(state.beerPong.lockedWidth, state.beerPong.lockedPower) : -1;
-
-  beerBongTable.style.setProperty('--shot-x', `${state.beerPong.lockedWidth * 100}%`);
-  beerBongTable.style.setProperty('--shot-y', `${state.beerPong.lockedPower * 100}%`);
-  missFlash.style.left = `${state.beerPong.lockedWidth * 100}%`;
-  missFlash.style.top = `${state.beerPong.lockedPower * 100}%`;
+  beerBongTable.style.setProperty('--shot-x', `${state.beerPong.aimX * 100}%`);
+  beerBongTable.style.setProperty('--shot-y', `${state.beerPong.aimY * 100}%`);
+  missFlash.style.left = `${state.beerPong.aimX * 100}%`;
+  missFlash.style.top = `${state.beerPong.aimY * 100}%`;
   shotBall.classList.remove('shooting');
   void shotBall.offsetWidth;
   shotBall.classList.add('shooting');
 
   window.setTimeout(() => {
-    if (hit && cupIndex >= 0) {
-      state.beerPong.shotResults[cupIndex] = 'hit';
+    if (hit) {
+      state.beerPong.shotResults[hitCupIndex] = 'hit';
       state.beerPong.hits += 1;
-      beerBongInstructions.textContent = 'Splash. Right in the cup.';
+      beerBongInstructions.textContent = BEER_PONG_HIT_MSGS[Math.floor(Math.random() * BEER_PONG_HIT_MSGS.length)];
       playSound('splash');
     } else {
-      const widthCall = state.beerPong.lockedWidth < 0.5 ? 'left' : 'right';
-      const powerCall = state.beerPong.lockedPower < 0.24 ? 'long' : 'short';
-      beerBongInstructions.textContent = `Missed it — drifted ${widthCall} and ${powerCall}.`;
+      beerBongInstructions.textContent = BEER_PONG_MISS_MSGS[Math.floor(Math.random() * BEER_PONG_MISS_MSGS.length)];
       missFlash.classList.remove('show');
       void missFlash.offsetWidth;
       missFlash.classList.add('show');
@@ -796,8 +846,8 @@ function resolveBeerPongShot() {
     renderBeerPong();
     shotBall.classList.remove('shooting');
 
-    if (hit && cupIndex >= 0) {
-      const cup = cupRack.querySelector(`.cup[data-cup-index="${cupIndex}"]`);
+    if (hit) {
+      const cup = cupRack.querySelector(`.cup[data-cup-index="${hitCupIndex}"]`);
       if (cup) {
         cup.classList.remove('hit-flash');
         void cup.offsetWidth;
@@ -807,18 +857,16 @@ function resolveBeerPongShot() {
 
     if (state.beerPong.shot >= 2) {
       window.setTimeout(() => {
-        beerBongActionBtn.textContent = 'Lock Width';
         beerBongActionBtn.disabled = false;
-        state.beerPong.phase = 'width';
+        state.beerPong.phase = 'aiming';
         finishBeerPongChallenge();
       }, 350);
       return;
     }
 
     state.beerPong.shot += 1;
-    state.beerPong.phase = 'width';
-    beerBongInstructions.textContent = 'Shot reset. Lock left-right aim.';
-    beerBongActionBtn.textContent = 'Lock Width';
+    state.beerPong.phase = 'aiming';
+    beerBongInstructions.textContent = BEER_PONG_RESET_MSGS[Math.floor(Math.random() * BEER_PONG_RESET_MSGS.length)];
     beerBongActionBtn.disabled = false;
     resetBeerPongAnimation();
   }, 600);
@@ -826,46 +874,23 @@ function resolveBeerPongShot() {
 
 function handleBeerPongAction() {
   if (state.beerPong.phase === 'resolving') return;
-
   stopBeerPongAnimation();
-
-  const domWidth = Number.parseFloat(aimCursor.style.left) / 100;
-  const domPower = Number.parseFloat(aimCursor.style.top) / 100;
-  const currentWidth = Number.isFinite(domWidth) ? clamp(domWidth, 0, 1) : state.beerPong.widthValue;
-  const currentPower = Number.isFinite(domPower) ? clamp(domPower, 0, 1) : state.beerPong.powerValue;
-
-  state.beerPong.widthValue = currentWidth;
-  state.beerPong.powerValue = currentPower;
-
-  if (state.beerPong.phase === 'width') {
-    state.beerPong.lockedWidth = currentWidth;
-    state.beerPong.phase = 'power';
-    beerBongInstructions.textContent = 'Left-right locked. Now lock depth.';
-    beerBongActionBtn.textContent = 'Lock Depth';
-    renderBeerPong();
-    resetBeerPongAnimation();
-    return;
-  }
-
-  state.beerPong.lockedPower = currentPower;
-  renderBeerPong();
   resolveBeerPongShot();
 }
 
 function startBeerBong() {
   stopBeerPongAnimation();
+  clearIdleTimer();
   state.beerBongCount += 1;
   state.roundBeerBongTriggered = true;
   const cupCount = Math.max(1, 6 - state.roundBeerBongCount * 2);
   state.roundBeerBongCount += 1;
   state.beerPong = {
-    phase: 'width',
+    phase: 'aiming',
     shot: 1,
     hits: 0,
-    widthValue: 0.5,
-    powerValue: 0.75,
-    lockedWidth: 0.5,
-    lockedPower: 0.24,
+    aimX: 0.5,
+    aimY: 0.5,
     cupCount,
     rafId: null,
     animationStart: 0,
@@ -874,8 +899,8 @@ function startBeerBong() {
 
   const roundData = ROUND_DATA[state.roundIndex];
   screens.beerbong.style.background = roundData?.bgGradient || 'linear-gradient(135deg, #1a1a2e, #1a1a2e)';
-  beerBongInstructions.textContent = 'Lock left-right aim first.';
-  beerBongActionBtn.textContent = 'Lock Width';
+  beerBongInstructions.textContent = 'Aim and throw when the cursor lines up!';
+  beerBongActionBtn.textContent = 'Throw! 🍺';
   showScreen('beerbong');
   renderBeerPong();
   resetBeerPongAnimation();
@@ -883,6 +908,7 @@ function startBeerBong() {
 
 function nextRound() {
   stopBeerPongAnimation();
+  clearIdleTimer();
   state.score += 100;
   if (!state.roundBeerBongTriggered) state.score += 500;
   state.angerPct = clamp(state.angerPct - 15, 0, 100);
@@ -890,13 +916,25 @@ function nextRound() {
 
   if (state.roundIndex >= ROUND_DATA.length) {
     state.score += 1000;
+    const winHeading = document.querySelector('#screen-win h2');
+    if (winHeading) {
+      winHeading.textContent = WIN_ENDINGS[Math.floor(Math.random() * WIN_ENDINGS.length)];
+    }
     document.getElementById('win-score').textContent = `Final Score: ${state.score}`;
     saveLeaderboard();
     showScreen('win');
     return;
   }
 
-  loadRound();
+  const jab = ROUND_END_JABS[Math.floor(Math.random() * ROUND_END_JABS.length)];
+  const nextRoundData = ROUND_DATA[state.roundIndex];
+  speechBubble.textContent = `${jab} Next up: ${nextRoundData.theme}`;
+  updateScore();
+  updateAngerBar();
+
+  window.setTimeout(() => {
+    loadRound();
+  }, 1800);
 }
 
 async function loadRound() {
@@ -934,6 +972,7 @@ async function loadRound() {
 
 function startGame() {
   stopBeerPongAnimation();
+  clearIdleTimer();
   state.score = 0;
   state.angerPct = 0;
   state.roundIndex = 0;
@@ -950,7 +989,7 @@ function buyBeer() {
   if (state.score < BUY_BEER_COST || state.answerLocked || state.isRoundLoading) return;
   state.score -= BUY_BEER_COST;
   state.angerPct = clamp(state.angerPct - BUY_BEER_ANGER_REDUCTION, 0, 100);
-  speechBubble.textContent = 'You bought him a beer. He is 20% less furious.';
+  speechBubble.textContent = BUY_BEER_MSGS[Math.floor(Math.random() * BUY_BEER_MSGS.length)];
   updateScore();
   updateAngerBar();
   updateFace();
