@@ -13,12 +13,15 @@ https://mccarthywilliam4-crypto.github.io/cheer-up-bud
 
 ## Rounds
 1. 🏒 Hockey
-2. 🦌 Hunting
-3. 🏕️ Camping
-4. 🚗 Cars
-5. 🌿 Weed
-6. 🎣 Fishing
-7. 🍺 Bar Crawl
+2. 🏈 Football
+3. ⚾ Baseball
+4. 🏀 Basketball
+5. ⛳ Golf
+6. 🏕️ Camping
+7. 🚗 Cars
+8. 🌿 Weed
+9. 🍺 Bar Crawl
+10. 🎬 Movies
 
 ## Adding Assets
 - Drop face photos into `assets/face/` named: `annoyed.png`, `angry.png`, `fuming.png`, `volcanic.png`

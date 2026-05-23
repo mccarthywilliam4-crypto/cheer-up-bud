@@ -20,52 +20,64 @@ const DIFFICULTY_EFFECTS = {
 
 const FALLBACK_TRIVIA = {
   hockey: [
-    { question: 'In hockey, what do players try to shoot into the net?', correct: 'A puck', incorrect: ['A baseball', 'A tennis ball', 'A shuttlecock'] },
-    { question: 'How many periods are played in a standard hockey game?', correct: 'Three', incorrect: ['Two', 'Four', 'Five'] },
-    { question: 'What piece of equipment protects a hockey player\'s head?', correct: 'A helmet', incorrect: ['A visor cap', 'A mouthguard', 'A shoulder pad'] },
-    { question: 'Which position usually guards the net in hockey?', correct: 'Goalie', incorrect: ['Center', 'Winger', 'Defenseman'] },
+    { question: 'What do you actually smack around in hockey?', correct: 'A puck', incorrect: ['A baseball', 'A golf ball', 'A tennis ball'] },
+    { question: 'How many periods are in a normal hockey game?', correct: 'Three', incorrect: ['Two', 'Four', 'Five'] },
+    { question: 'Who is the dude trying to stop every shot?', correct: 'The goalie', incorrect: ['The ref', 'The mascot', 'The equipment manager'] },
+    { question: 'If somebody gets checked into the boards, what sport are you watching?', correct: 'Hockey', incorrect: ['Golf', 'Baseball', 'Tennis'] },
   ],
-  hunting: [
-    { question: 'What kind of tracks help hunters spot where an animal walked?', correct: 'Footprints', incorrect: ['Clouds', 'Shadows', 'Campfires'] },
-    { question: 'Why do hunters often wear camouflage?', correct: 'To blend into their surroundings', incorrect: ['To stay warmer than everyone else', 'To signal airplanes', 'To attract animals'] },
-    { question: 'What is a common safety rule when carrying a rifle?', correct: 'Keep the muzzle pointed in a safe direction', incorrect: ['Swing it freely while hiking', 'Always rest it on your shoulder with the trigger pressed', 'Carry it with the safety off'] },
-    { question: 'What time of day are deer often most active?', correct: 'Dawn and dusk', incorrect: ['Only at noon', 'Only after midnight', 'Only in heavy rain'] },
+  football: [
+    { question: 'How many points is a touchdown before the extra kick?', correct: 'Six', incorrect: ['Three', 'Five', 'Seven'] },
+    { question: 'What does a QB throw to move the chains quick?', correct: 'A pass', incorrect: ['A curveball', 'A faceoff', 'A kickoff tee'] },
+    { question: 'What do they call it on 4th down when you boot it away?', correct: 'A punt', incorrect: ['A free throw', 'A slapshot', 'A penalty shot'] },
+    { question: 'What part of the field are you trying to reach to score?', correct: 'The end zone', incorrect: ['The bullpen', 'Center ice', 'The dugout'] },
+  ],
+  baseball: [
+    { question: 'How many strikes and you gotta head back to the dugout?', correct: 'Three', incorrect: ['Two', 'Four', 'Five'] },
+    { question: 'What do you call it when the batter smokes one out of the park?', correct: 'A home run', incorrect: ['A hole in one', 'A touchdown', 'A hat trick'] },
+    { question: 'How many bases are there to run in a full trip around?', correct: 'Four', incorrect: ['Three', 'Five', 'Six'] },
+    { question: 'What is the guy on the mound called?', correct: 'The pitcher', incorrect: ['The bowler', 'The caddie', 'The keeper'] },
+  ],
+  basketball: [
+    { question: 'How many points is a normal shot inside the arc?', correct: 'Two', incorrect: ['One', 'Three', 'Four'] },
+    { question: 'How many points is a made free throw?', correct: 'One', incorrect: ['Two', 'Three', 'Zero'] },
+    { question: 'What do you call it when someone throws down hard at the rim?', correct: 'A dunk', incorrect: ['A bunt', 'A chip shot', 'A body check'] },
+    { question: 'If your foot is on the line for a long shot, it counts for what?', correct: 'Two points', incorrect: ['Three points', 'One point', 'Four points'] },
+  ],
+  golf: [
+    { question: 'What do you yell when your shot is flying toward random people?', correct: 'Fore!', incorrect: ['Heads up!', 'Timber!', 'Inbound!'] },
+    { question: 'What do golfers use to tee off on most long holes?', correct: 'A driver', incorrect: ['A putter', 'A goalie stick', 'A cue stick'] },
+    { question: 'What\'s it called when you finish a hole in one less than par?', correct: 'Birdie', incorrect: ['Bogey', 'Eagle eye', 'Hat trick'] },
+    { question: 'What is the smooth area with the hole and flag called?', correct: 'The green', incorrect: ['The rink', 'The pit lane', 'The infield'] },
   ],
   camping: [
-    { question: 'What should you pack if you want to start a campfire safely?', correct: 'Matches or a lighter', incorrect: ['A hair dryer', 'A blender', 'A TV remote'] },
-    { question: 'What does a map help you do while camping?', correct: 'Navigate trails', incorrect: ['Cook food faster', 'Keep bugs away', 'Pitch a tent'] },
-    { question: 'What should you store away from your tent to avoid attracting animals?', correct: 'Food', incorrect: ['Sleeping bags', 'Flashlights', 'Boots'] },
-    { question: 'What is usually the first thing you should set up at camp?', correct: 'Your shelter', incorrect: ['A karaoke machine', 'A hammock over a river', 'A cooler in the sun'] },
+    { question: 'You pull up to camp first thing — what do you set up before anything else?', correct: 'The tent', incorrect: ['The karaoke speaker', 'The hammock over rocks', 'A card table bar'] },
+    { question: 'What should stay zipped up unless you want raccoons throwing a party?', correct: 'Your food', incorrect: ['Your socks', 'Your flashlight', 'Your camp chair'] },
+    { question: 'What actually gets a fire going quick without drama?', correct: 'Matches or a lighter', incorrect: ['A leaf blower', 'A phone flashlight', 'A can opener'] },
+    { question: 'When it gets dark on a trail, what are you happy you packed?', correct: 'A flashlight', incorrect: ['A mirror ball', 'A laptop stand', 'A waffle iron'] },
   ],
   cars: [
-    { question: 'What does a check engine light usually mean?', correct: 'The car needs attention', incorrect: ['The radio is too loud', 'Your tires are overinflated with joy', 'The gas cap turned into a trophy'] },
-    { question: 'What do you use a wrench for?', correct: 'Tightening or loosening bolts', incorrect: ['Checking tire pressure', 'Waxing the hood', 'Refilling windshield washer fluid'] },
-    { question: 'Which pedal makes a car slow down?', correct: 'Brake', incorrect: ['Clutch', 'Gas', 'Parking sensor'] },
-    { question: 'What should you regularly check to keep a car running well?', correct: 'Oil level', incorrect: ['Cup holder depth', 'Speaker color', 'Seatbelt stitching pattern'] },
+    { question: 'If the check engine light pops on, what is your car telling you?', correct: 'Something needs attention', incorrect: ['Bass is too loud', 'You unlocked sport mode', 'You won a free wash'] },
+    { question: 'Which pedal actually slows the car down?', correct: 'Brake', incorrect: ['Gas', 'Floor pedal', 'Horn pedal'] },
+    { question: 'What fluid do you check so your engine doesn\'t cook itself?', correct: 'Oil', incorrect: ['Soda', 'Coolant cologne', 'Window tint fluid'] },
+    { question: 'What tool are you grabbing to loosen a stubborn bolt?', correct: 'A wrench', incorrect: ['A spatula', 'A paintbrush', 'A tape measure'] },
   ],
   weed: [
-    { question: 'Which device is commonly used to light a joint?', correct: 'A lighter', incorrect: ['A can opener', 'A key fob', 'A stapler'] },
-    { question: 'What food is often jokingly linked to the munchies?', correct: 'Pizza', incorrect: ['Raw onions', 'Plain rice cakes', 'Canned spinach'] },
-    { question: 'What is an edible?', correct: 'A cannabis-infused food item', incorrect: ['A strain of lawn grass', 'A type of ashtray', 'A rolling tray brand only'] },
-    { question: 'What might someone use after smoking to reduce red eyes?', correct: 'Eye drops', incorrect: ['Brake fluid', 'Sunscreen', 'Engine oil'] },
-  ],
-  fishing: [
-    { question: 'What do anglers usually put on a hook to attract fish?', correct: 'Bait', incorrect: ['A flashlight', 'A whistle', 'A car key'] },
-    { question: 'What should you keep tight to avoid losing a fish once it bites?', correct: 'Your fishing line', incorrect: ['Your backpack straps', 'The boat stereo cord', 'Your jacket zipper'] },
-    { question: 'Which piece of gear helps you reel a fish in?', correct: 'A rod and reel', incorrect: ['A tire iron', 'A compass', 'A lantern'] },
-    { question: 'Where do fish usually live?', correct: 'In water', incorrect: ['Inside hollow trees', 'On mountain ridges', 'Buried in sand dunes'] },
+    { question: 'What do most people use to light up a joint?', correct: 'A lighter', incorrect: ['A wrench', 'A stapler', 'A TV remote'] },
+    { question: 'What snack shows up first when the munchies hit?', correct: 'Pizza', incorrect: ['Plain celery', 'Unseasoned tofu', 'Ice cubes'] },
+    { question: 'If your eyes get red, what helps fast?', correct: 'Eye drops', incorrect: ['Motor oil', 'Sunscreen', 'Brake cleaner'] },
+    { question: 'An edible is basically what?', correct: 'Cannabis in food', incorrect: ['A new grinder brand', 'A rolling paper size', 'A strain of grass seed'] },
   ],
   barCrawl: [
-    { question: 'What does it mean to start a tab at a bar?', correct: 'Open a running bill', incorrect: ['Order a taxi', 'Reserve the jukebox', 'Challenge the bartender to trivia'] },
-    { question: 'What game is commonly played with a cue stick in bars?', correct: 'Pool', incorrect: ['Darts hockey', 'Table tennis bowling', 'Foam fencing'] },
-    { question: 'What should you do before leaving a bar if you opened a tab?', correct: 'Close it out', incorrect: ['Hide the receipt', 'Order water for the pool table', 'Take the glassware home'] },
-    { question: 'What is the bartender mainly responsible for?', correct: 'Serving drinks', incorrect: ['Judging karaoke finals', 'Running the parking lot', 'Managing hotel check-ins'] },
+    { question: 'Starting a tab means what?', correct: 'You open a running bill', incorrect: ['You call an Uber', 'You reserve the jukebox', 'You pre-order tacos'] },
+    { question: 'Before you leave, what do you need to do with that tab?', correct: 'Close it out', incorrect: ['Hide from the bartender', 'Switch bars and hope', 'Pay next week'] },
+    { question: 'What game are you probably playing if someone yells "bank shot!"?', correct: 'Pool', incorrect: ['Bowling', 'Foosball golf', 'Table shuffle tennis'] },
+    { question: 'Who actually pours the drinks all night?', correct: 'The bartender', incorrect: ['The bouncer', 'The DJ', 'The karaoke host'] },
   ],
   movies: [
-    { question: 'Which kind of movie usually features explosions, chases, and fights?', correct: 'Action', incorrect: ['Nature documentary', 'Silent art film', 'Cooking special'] },
-    { question: 'What genre is meant to make the audience laugh?', correct: 'Comedy', incorrect: ['Thriller', 'Horror', 'Western'] },
-    { question: 'What genre usually builds suspense and tension around danger?', correct: 'Thriller', incorrect: ['Musical', 'Romantic comedy', 'Sports documentary'] },
-    { question: 'What is a trailer supposed to do?', correct: 'Preview a movie before release', incorrect: ['Replace the ending', 'List every actor\'s salary', 'Explain how projectors work'] },
+    { question: 'Explosions, car chases, and fistfights usually means what genre?', correct: 'Action', incorrect: ['Documentary', 'Rom-com', 'Cooking show'] },
+    { question: 'If the whole theater is laughing, you probably picked what?', correct: 'Comedy', incorrect: ['Horror', 'War drama', 'Silent thriller'] },
+    { question: 'A trailer is there to do what?', correct: 'Preview the movie', incorrect: ['Show bloopers only', 'Spoil the ending', 'List actor salaries'] },
+    { question: 'If your buddy says "that ending messed me up," what genre is likely?', correct: 'Thriller', incorrect: ['Sports recap', 'Game show', 'Nature tour'] },
   ],
 };
 
@@ -85,17 +97,59 @@ const ROUND_DATA = [
     ],
   },
   {
-    key: 'hunting',
-    theme: '🦌 Hunting',
-    label: 'Hunting',
-    bgGradient: 'linear-gradient(135deg, #1a2e1a, #4a3728)',
-    triviaCategory: 27,
+    key: 'football',
+    theme: '🏈 Football',
+    label: 'Football',
+    bgGradient: 'linear-gradient(135deg, #1a2e10, #3b5e20)',
+    triviaCategory: 21,
     triviaDifficulty: 'easy',
-    insultContext: 'hunting',
+    insultContext: 'football',
     fallbackInsults: [
-      'The deer walked up to get a closer look at whatever the hell you\'re doing.',
-      'You\'ve been outside for three hours and the only thing you\'ve killed is my patience.',
-      'You couldn\'t track a bleeding elephant through fresh snow.',
+      'You read that play like a guy watching football through a keyhole.',
+      'You had one job and still got tackled by the question.',
+      'You just fumbled trivia in open field with nobody around.',
+    ],
+  },
+  {
+    key: 'baseball',
+    theme: '⚾ Baseball',
+    label: 'Baseball',
+    bgGradient: 'linear-gradient(135deg, #0a2040, #c8a96e)',
+    triviaCategory: 21,
+    triviaDifficulty: 'easy',
+    insultContext: 'baseball',
+    fallbackInsults: [
+      'That answer swung so late it missed yesterday.',
+      'You just struck out looking at a tee-ball question.',
+      'Even the bullpen is laughing at that guess.',
+    ],
+  },
+  {
+    key: 'basketball',
+    theme: '🏀 Basketball',
+    label: 'Basketball',
+    bgGradient: 'linear-gradient(135deg, #2e1400, #b85c00)',
+    triviaCategory: 21,
+    triviaDifficulty: 'easy',
+    insultContext: 'basketball',
+    fallbackInsults: [
+      'That answer hit backboard, rim, and somehow your own ego.',
+      'You bricked that one so hard the whole gym heard it.',
+      'Wide open layup and you still missed.',
+    ],
+  },
+  {
+    key: 'golf',
+    theme: '⛳ Golf',
+    label: 'Golf',
+    bgGradient: 'linear-gradient(135deg, #0f2010, #2e6b2e)',
+    triviaCategory: 21,
+    triviaDifficulty: 'easy',
+    insultContext: 'golf',
+    fallbackInsults: [
+      'That answer sliced straight into the parking lot.',
+      'You just four-putted from two feet in trivia form.',
+      'Even your caddie would tell you to put the pencil down.',
     ],
   },
   {
@@ -103,13 +157,13 @@ const ROUND_DATA = [
     theme: '🏕️ Camping',
     label: 'Camping',
     bgGradient: 'linear-gradient(135deg, #0f1f0f, #2c3e1a)',
-    triviaCategory: 22,
+    triviaCategory: 9,
     triviaDifficulty: 'medium',
     insultContext: 'camping',
     fallbackInsults: [
-      'You packed four hoodies and forgot matches. You deserve to be cold and stupid.',
-      'The bear spray is for bears. Stop pointing it at yourself, that tracks though.',
-      'You called it \"glamping\" once. I haven\'t forgotten.',
+      'You packed vibes and forgot common sense. Again.',
+      'A squirrel has better survival instincts than that answer.',
+      'You couldn\'t find camp if it was pinned on your map app.',
     ],
   },
   {
@@ -130,7 +184,7 @@ const ROUND_DATA = [
     key: 'weed',
     theme: '🌿 Weed',
     label: 'Weed',
-    bgGradient: 'linear-gradient(135deg, #1a0d2e, #2e1a0d)',
+    bgGradient: 'linear-gradient(135deg, #1a0d2e, #0d2e1a)',
     triviaCategory: 9,
     triviaDifficulty: 'medium',
     insultContext: 'weed',
@@ -141,25 +195,11 @@ const ROUND_DATA = [
     ],
   },
   {
-    key: 'fishing',
-    theme: '🎣 Fishing',
-    label: 'Fishing',
-    bgGradient: 'linear-gradient(135deg, #0d1f2e, #1a3a2a)',
-    triviaCategory: 27,
-    triviaDifficulty: 'hard',
-    insultContext: 'fishing',
-    fallbackInsults: [
-      'You tangled your line in a tree, on a boat, in open water. How.',
-      'The fish aren\'t biting because they can hear you talking about your podcast idea.',
-      'You bought $400 in gear and got outsmarted by something with no brain and no spine.',
-    ],
-  },
-  {
     key: 'barCrawl',
     theme: '🍺 Bar Crawl',
     label: 'Bar Crawl',
-    bgGradient: 'linear-gradient(135deg, #1a0a2e, #2e0a1a)',
-    triviaCategory: 14,
+    bgGradient: 'linear-gradient(135deg, #1a0a00, #3a1f00)',
+    triviaCategory: 9,
     triviaDifficulty: 'hard',
     insultContext: 'bar crawl',
     fallbackInsults: [
@@ -244,10 +284,10 @@ const cupRack = document.getElementById('cup-rack');
 const beerBongInstructions = document.getElementById('beerbong-instructions');
 const beerBongShotLabel = document.getElementById('beerbong-shot-label');
 const beerBongResultLabel = document.getElementById('beerbong-result-label');
-const widthIndicator = document.getElementById('width-indicator');
-const powerIndicator = document.getElementById('power-indicator');
-const widthLane = document.getElementById('width-lane');
-const powerLane = document.getElementById('power-lane');
+const beerBongTable = document.getElementById('beerbong-table');
+const aimCursor = document.getElementById('aim-cursor');
+const shotBall = document.getElementById('shot-ball');
+const missFlash = document.getElementById('miss-flash');
 const beerBongActionBtn = document.getElementById('beerbong-action-btn');
 
 function showScreen(key) {
@@ -520,13 +560,16 @@ function renderQuestion() {
   });
 }
 
-function applyAnswerState(buttonIndex, className) {
+function applyAnswerState(buttonIndex, className, correctIndex = -1) {
   const buttons = [...answersGrid.querySelectorAll('.answer-btn')];
   buttons.forEach((button) => {
     button.disabled = true;
   });
   if (buttons[buttonIndex]) {
     buttons[buttonIndex].classList.add(className);
+  }
+  if (className === 'wrong' && correctIndex >= 0 && buttons[correctIndex]) {
+    buttons[correctIndex].classList.add('correct');
   }
 }
 
@@ -558,7 +601,8 @@ function answerQuestion(index) {
     state.safeStreak = 0;
     state.wrongAnswers += 1;
     state.angerPct = clamp(state.angerPct + effects.wrong, 0, 100);
-    applyAnswerState(index, 'wrong');
+    const correctChoiceIndex = question.choices.findIndex((candidate) => candidate.correct);
+    applyAnswerState(index, 'wrong', correctChoiceIndex);
     triggerShake();
     playSound('wrong');
     speechBubble.textContent = getFallbackInsult(roundData);
@@ -590,40 +634,55 @@ function answerQuestion(index) {
   }, choice.correct ? 550 : 700);
 }
 
+function getCupFormation(cupCount) {
+  if (cupCount >= 6) return [[0, 1, 2], [3, 4], [5]];
+  if (cupCount === 4) return [[0], [1, 2], [3]];
+  if (cupCount === 2) return [[0, 1]];
+  return [[0]];
+}
+
 function renderBeerPong() {
   cupRack.innerHTML = '';
-  for (let i = 0; i < state.beerPong.cupCount; i += 1) {
-    const cup = document.createElement('div');
-    cup.className = 'cup';
-    cup.textContent = '🥤';
-    const shotResult = state.beerPong.shotResults[i];
-    if (shotResult === 'hit') cup.classList.add('sunk');
-    if (shotResult === 'miss') cup.classList.add('missed');
-    cupRack.appendChild(cup);
-  }
+  const formation = getCupFormation(state.beerPong.cupCount);
+  formation.forEach((rowIndexes) => {
+    const row = document.createElement('div');
+    row.className = 'cup-row';
+    rowIndexes.forEach((cupIndex) => {
+      const cup = document.createElement('div');
+      cup.className = 'cup';
+      cup.dataset.cupIndex = String(cupIndex);
+      if (state.beerPong.shotResults[cupIndex] === 'hit') {
+        cup.classList.add('sunk');
+      }
+      row.appendChild(cup);
+    });
+    cupRack.appendChild(row);
+  });
 
   beerBongShotLabel.textContent = `Shot ${state.beerPong.shot} of 2`;
   beerBongResultLabel.textContent = `Sinks: ${state.beerPong.hits}/2`;
-  widthLane.className = `aim-lane ${state.beerPong.phase === 'width' ? 'active-lane' : 'idle-lane'}`;
-  powerLane.className = `aim-lane ${state.beerPong.phase === 'power' ? 'active-lane' : 'idle-lane'}`;
-  widthIndicator.style.left = `${state.beerPong.widthValue * 100}%`;
-  powerIndicator.style.top = `${state.beerPong.powerValue * 100}%`;
+  aimCursor.style.left = `${state.beerPong.widthValue * 100}%`;
+  aimCursor.style.top = `${state.beerPong.powerValue * 100}%`;
 }
 
 function updateBeerPongAnimation(timestamp) {
   if (!state.beerPong.animationStart) state.beerPong.animationStart = timestamp;
 
   const elapsed = timestamp - state.beerPong.animationStart;
-  const speedMultiplier = Math.pow(1.15, state.roundIndex);
-  const cycleMs = (state.beerPong.phase === 'width' ? 1500 : 1200) / speedMultiplier;
-  const raw = (elapsed % cycleMs) / cycleMs;
-  const oscillatingValue = raw <= 0.5 ? raw * 2 : (1 - raw) * 2;
+  const speedMultiplier = Math.pow(1.12, state.roundIndex);
+  const widthCycleMs = 1500 / speedMultiplier;
+  const powerCycleMs = 1300 / speedMultiplier;
+  const widthRaw = (elapsed % widthCycleMs) / widthCycleMs;
+  const powerRaw = ((elapsed + 300) % powerCycleMs) / powerCycleMs;
+  const oscillatingWidth = widthRaw <= 0.5 ? widthRaw * 2 : (1 - widthRaw) * 2;
+  const oscillatingPower = powerRaw <= 0.5 ? powerRaw * 2 : (1 - powerRaw) * 2;
 
   if (state.beerPong.phase === 'width') {
-    state.beerPong.widthValue = oscillatingValue;
-  } else {
-    state.beerPong.powerValue = oscillatingValue;
+    state.beerPong.widthValue = oscillatingWidth;
+  } else if (state.beerPong.phase === 'power') {
+    state.beerPong.widthValue = state.beerPong.lockedWidth;
   }
+  state.beerPong.powerValue = oscillatingPower;
 
   renderBeerPong();
   state.beerPong.rafId = window.requestAnimationFrame(updateBeerPongAnimation);
@@ -674,56 +733,122 @@ function finishBeerPongChallenge() {
   }
 }
 
+function getNearestCupIndex(targetX, targetY) {
+  const tableRect = beerBongTable.getBoundingClientRect();
+  const targetClientX = tableRect.left + tableRect.width * targetX;
+  const targetClientY = tableRect.top + tableRect.height * targetY;
+  const remainingCups = [...cupRack.querySelectorAll('.cup:not(.sunk)')];
+
+  if (!remainingCups.length) return -1;
+
+  let nearestIndex = Number(remainingCups[0].dataset.cupIndex);
+  let nearestDistance = Number.POSITIVE_INFINITY;
+
+  remainingCups.forEach((cup) => {
+    const rect = cup.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const distance = Math.hypot(centerX - targetClientX, centerY - targetClientY);
+    if (distance < nearestDistance) {
+      nearestDistance = distance;
+      nearestIndex = Number(cup.dataset.cupIndex);
+    }
+  });
+
+  return Number.isFinite(nearestIndex) ? nearestIndex : -1;
+}
+
 function resolveBeerPongShot() {
-  const widthTolerance = Math.max(0.1, 0.18 - state.roundIndex * 0.01 - (6 - state.beerPong.cupCount) * 0.0125);
-  const powerTolerance = Math.max(0.1, 0.16 - state.roundIndex * 0.008);
+  state.beerPong.phase = 'resolving';
+  beerBongActionBtn.disabled = true;
+
+  const widthTolerance = Math.max(0.1, 0.2 - state.roundIndex * 0.01 - (6 - state.beerPong.cupCount) * 0.0125);
+  const powerTolerance = Math.max(0.08, 0.17 - state.roundIndex * 0.008);
   const widthHit = Math.abs(state.beerPong.lockedWidth - 0.5) <= widthTolerance;
-  const powerHit = Math.abs(state.beerPong.lockedPower - 0.5) <= powerTolerance;
+  const powerHit = Math.abs(state.beerPong.lockedPower - 0.24) <= powerTolerance;
   const hit = widthHit && powerHit;
+  const cupIndex = hit ? getNearestCupIndex(state.beerPong.lockedWidth, state.beerPong.lockedPower) : -1;
 
-  state.beerPong.shotResults[state.beerPong.shot - 1] = hit ? 'hit' : 'miss';
-  if (hit) {
-    state.beerPong.hits += 1;
-    beerBongInstructions.textContent = 'Splash. That one dropped clean.';
-    playSound('splash');
-  } else {
-    const widthCall = state.beerPong.lockedWidth < 0.5 ? 'wide left' : 'wide right';
-    const powerCall = state.beerPong.lockedPower < 0.5 ? 'short' : 'long';
-    beerBongInstructions.textContent = `Missed it — ${widthCall} and ${powerCall}.`;
-  }
+  beerBongTable.style.setProperty('--shot-x', `${state.beerPong.lockedWidth * 100}%`);
+  beerBongTable.style.setProperty('--shot-y', `${state.beerPong.lockedPower * 100}%`);
+  missFlash.style.left = `${state.beerPong.lockedWidth * 100}%`;
+  missFlash.style.top = `${state.beerPong.lockedPower * 100}%`;
+  shotBall.classList.remove('shooting');
+  void shotBall.offsetWidth;
+  shotBall.classList.add('shooting');
 
-  beerBongResultLabel.textContent = `Sinks: ${state.beerPong.hits}/2`;
-  renderBeerPong();
+  window.setTimeout(() => {
+    if (hit && cupIndex >= 0) {
+      state.beerPong.shotResults[cupIndex] = 'hit';
+      state.beerPong.hits += 1;
+      beerBongInstructions.textContent = 'Splash. Right in the cup.';
+      playSound('splash');
+    } else {
+      const widthCall = state.beerPong.lockedWidth < 0.5 ? 'left' : 'right';
+      const powerCall = state.beerPong.lockedPower < 0.24 ? 'long' : 'short';
+      beerBongInstructions.textContent = `Missed it — drifted ${widthCall} and ${powerCall}.`;
+      missFlash.classList.remove('show');
+      void missFlash.offsetWidth;
+      missFlash.classList.add('show');
+    }
 
-  if (state.beerPong.shot >= 2) {
-    beerBongActionBtn.disabled = true;
-    window.setTimeout(() => {
-      beerBongActionBtn.disabled = false;
-      beerBongActionBtn.textContent = 'Lock Width';
-      finishBeerPongChallenge();
-    }, 650);
-    return;
-  }
+    beerBongResultLabel.textContent = `Sinks: ${state.beerPong.hits}/2`;
+    renderBeerPong();
+    shotBall.classList.remove('shooting');
 
-  state.beerPong.shot += 1;
-  state.beerPong.phase = 'width';
-  beerBongInstructions.textContent = 'Shot reset. Lock the width.';
-  beerBongActionBtn.textContent = 'Lock Width';
-  resetBeerPongAnimation();
+    if (hit && cupIndex >= 0) {
+      const cup = cupRack.querySelector(`.cup[data-cup-index="${cupIndex}"]`);
+      if (cup) {
+        cup.classList.remove('hit-flash');
+        void cup.offsetWidth;
+        cup.classList.add('hit-flash');
+      }
+    }
+
+    if (state.beerPong.shot >= 2) {
+      window.setTimeout(() => {
+        beerBongActionBtn.textContent = 'Lock Width';
+        beerBongActionBtn.disabled = false;
+        state.beerPong.phase = 'width';
+        finishBeerPongChallenge();
+      }, 350);
+      return;
+    }
+
+    state.beerPong.shot += 1;
+    state.beerPong.phase = 'width';
+    beerBongInstructions.textContent = 'Shot reset. Lock left-right aim.';
+    beerBongActionBtn.textContent = 'Lock Width';
+    beerBongActionBtn.disabled = false;
+    resetBeerPongAnimation();
+  }, 600);
 }
 
 function handleBeerPongAction() {
+  if (state.beerPong.phase === 'resolving') return;
+
+  stopBeerPongAnimation();
+
+  const domWidth = Number.parseFloat(aimCursor.style.left) / 100;
+  const domPower = Number.parseFloat(aimCursor.style.top) / 100;
+  const currentWidth = Number.isFinite(domWidth) ? clamp(domWidth, 0, 1) : state.beerPong.widthValue;
+  const currentPower = Number.isFinite(domPower) ? clamp(domPower, 0, 1) : state.beerPong.powerValue;
+
+  state.beerPong.widthValue = currentWidth;
+  state.beerPong.powerValue = currentPower;
+
   if (state.beerPong.phase === 'width') {
-    state.beerPong.lockedWidth = state.beerPong.widthValue;
+    state.beerPong.lockedWidth = currentWidth;
     state.beerPong.phase = 'power';
-    beerBongInstructions.textContent = 'Width locked. Now lock the depth.';
-    beerBongActionBtn.textContent = 'Lock Power';
+    beerBongInstructions.textContent = 'Left-right locked. Now lock depth.';
+    beerBongActionBtn.textContent = 'Lock Depth';
+    renderBeerPong();
     resetBeerPongAnimation();
     return;
   }
 
-  state.beerPong.lockedPower = state.beerPong.powerValue;
-  stopBeerPongAnimation();
+  state.beerPong.lockedPower = currentPower;
+  renderBeerPong();
   resolveBeerPongShot();
 }
 
@@ -731,23 +856,25 @@ function startBeerBong() {
   stopBeerPongAnimation();
   state.beerBongCount += 1;
   state.roundBeerBongTriggered = true;
-  const cupCount = Math.max(2, 6 - state.roundBeerBongCount * 2);
+  const cupCount = Math.max(1, 6 - state.roundBeerBongCount * 2);
   state.roundBeerBongCount += 1;
   state.beerPong = {
     phase: 'width',
     shot: 1,
     hits: 0,
     widthValue: 0.5,
-    powerValue: 0.5,
+    powerValue: 0.75,
     lockedWidth: 0.5,
-    lockedPower: 0.5,
+    lockedPower: 0.24,
     cupCount,
     rafId: null,
     animationStart: 0,
-    shotResults: [],
+    shotResults: Array.from({ length: cupCount }, () => null),
   };
 
-  beerBongInstructions.textContent = 'Lock in the width first.';
+  const roundData = ROUND_DATA[state.roundIndex];
+  screens.beerbong.style.background = roundData?.bgGradient || 'linear-gradient(135deg, #1a1a2e, #1a1a2e)';
+  beerBongInstructions.textContent = 'Lock left-right aim first.';
   beerBongActionBtn.textContent = 'Lock Width';
   showScreen('beerbong');
   renderBeerPong();
@@ -785,7 +912,9 @@ async function loadRound() {
   const roundData = ROUND_DATA[state.roundIndex];
 
   roundLabel.textContent = `Round ${state.roundIndex + 1}: ${roundData.theme}`;
-  screens.game.style.background = roundData.bgGradient || 'linear-gradient(135deg, #1a1a2e, #1a1a2e)';
+  const roundGradient = roundData.bgGradient || 'linear-gradient(135deg, #1a1a2e, #1a1a2e)';
+  screens.game.style.background = roundGradient;
+  screens.beerbong.style.background = roundGradient;
   speechBubble.textContent = buildRoundIntro(roundData);
   updateScore();
   updateAngerBar();

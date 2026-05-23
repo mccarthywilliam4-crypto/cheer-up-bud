@@ -49,31 +49,17 @@
 
     <section id="screen-beerbong" class="screen">
       <h2>🏓 Beer Pong Shot</h2>
-      <p id="beerbong-instructions">Lock in the width first.</p>
-      <div id="cup-rack" class="cup-rack" aria-label="Beer pong cup rack"></div>
+      <p id="beerbong-instructions">Lock in the left-right aim first.</p>
       <div class="beerbong-meta">
         <span id="beerbong-shot-label">Shot 1 of 2</span>
         <span id="beerbong-result-label">Sinks: 0/2</span>
       </div>
-      <div id="width-lane" class="aim-lane active-lane">
-        <div class="lane-header">
-          <span>Width</span>
-          <span>Miss ← sweet spot → Miss</span>
-        </div>
-        <div class="lane-track horizontal-track">
-          <div class="sweet-spot"></div>
-          <div id="width-indicator" class="aim-indicator horizontal-indicator"></div>
-        </div>
-      </div>
-      <div id="power-lane" class="aim-lane idle-lane">
-        <div class="lane-header">
-          <span>Depth / Power</span>
-          <span>Short ↑ sweet spot ↓ Long</span>
-        </div>
-        <div class="lane-track vertical-track">
-          <div class="sweet-spot"></div>
-          <div id="power-indicator" class="aim-indicator vertical-indicator"></div>
-        </div>
+      <div id="beerbong-table" class="beerbong-table" aria-label="Beer pong aiming table">
+        <div id="sweet-spot-zone" class="sweet-spot-zone"></div>
+        <div id="cup-rack" class="cup-rack" aria-label="Beer pong cup rack"></div>
+        <div id="aim-cursor" class="aim-cursor"></div>
+        <div id="shot-ball" class="ball" aria-hidden="true"></div>
+        <div id="miss-flash" class="miss-flash" aria-hidden="true"></div>
       </div>
       <button id="beerbong-action-btn" class="chug-btn" type="button">Lock Width</button>
     </section>
