@@ -1,4 +1,10 @@
 const GROQ_API_KEY = ''; // Add your Groq API key here to enable AI-generated insults.
+
+// To use a custom face image instead of the default emoji/SVG faces:
+// 1. Place your image files in the assets/face/ folder (e.g., annoyed.png, angry.png, fuming.png, volcanic.png)
+// 2. Update the 'img' paths in FACE_STATES below to point to your files
+// 3. The images will be displayed at the size of the face-container (see style.css)
+// Supported formats: PNG, JPG, GIF, SVG, WebP
 const QUESTION_COUNT = 7;
 const WRONG_LIMIT = 3;
 const BUY_BEER_COST = 200;
@@ -112,31 +118,6 @@ const FALLBACK_TRIVIA = {
     { question: 'What\'s it called when you finish a hole in one less than par?', correct: 'Birdie', incorrect: ['Bogey', 'Eagle eye', 'Hat trick'] },
     { question: 'What is the smooth area with the hole and flag called?', correct: 'The green', incorrect: ['The rink', 'The pit lane', 'The infield'] },
   ],
-  guysAndGear: [
-    { question: 'If the check engine light pops on, what is your car telling you?', correct: 'Something needs attention', incorrect: ['Bass is too loud', 'You unlocked sport mode', 'You won a free wash'] },
-    { question: 'Which pedal actually slows the car down?', correct: 'Brake', incorrect: ['Gas', 'Floor pedal', 'Horn pedal'] },
-    { question: 'What fluid do you check so your engine doesn\'t cook itself?', correct: 'Oil', incorrect: ['Soda', 'Coolant cologne', 'Window tint fluid'] },
-    { question: 'What tool are you grabbing to loosen a stubborn bolt?', correct: 'A wrench', incorrect: ['A spatula', 'A paintbrush', 'A tape measure'] },
-    { question: 'What do you call the spare tire most cars keep in the trunk?', correct: 'A donut', incorrect: ['A retreader', 'A floater', 'A backup rim'] },
-    { question: 'What number on the pump tells you the octane rating?', correct: '87, 89, or 93', incorrect: ['12, 14, or 16', 'The color of the nozzle', 'The MPG sticker'] },
-  ],
-  nightOut: [
-    { question: 'What do most people use to light up a joint?', correct: 'A lighter', incorrect: ['A wrench', 'A stapler', 'A TV remote'] },
-    { question: 'What snack shows up first when the munchies hit?', correct: 'Pizza', incorrect: ['Plain celery', 'Unseasoned tofu', 'Ice cubes'] },
-    { question: 'If your eyes get red, what helps fast?', correct: 'Eye drops', incorrect: ['Motor oil', 'Sunscreen', 'Brake cleaner'] },
-    { question: 'An edible is basically what?', correct: 'Cannabis in food', incorrect: ['A new grinder brand', 'A rolling paper size', 'A strain of grass seed'] },
-    { question: 'Starting a tab means what?', correct: 'You open a running bill', incorrect: ['You call an Uber', 'You reserve the jukebox', 'You pre-order tacos'] },
-    { question: 'Before you leave, what do you need to do with that tab?', correct: 'Close it out', incorrect: ['Hide from the bartender', 'Switch bars and hope', 'Pay next week'] },
-    { question: 'What game are you probably playing if someone yells "bank shot!"?', correct: 'Pool', incorrect: ['Bowling', 'Foosball golf', 'Table shuffle tennis'] },
-    { question: 'Who actually pours the drinks all night?', correct: 'The bartender', incorrect: ['The bouncer', 'The DJ', 'The karaoke host'] },
-  ],
-  popCulture: [
-    { question: 'Explosions, car chases, and fistfights usually means what genre?', correct: 'Action', incorrect: ['Documentary', 'Rom-com', 'Cooking show'] },
-    { question: 'If the whole theater is laughing, you probably picked what?', correct: 'Comedy', incorrect: ['Horror', 'War drama', 'Silent thriller'] },
-    { question: 'A trailer is there to do what?', correct: 'Preview the movie', incorrect: ['Show bloopers only', 'Spoil the ending', 'List actor salaries'] },
-    { question: 'If your buddy says "that ending messed me up," what genre is likely?', correct: 'Thriller', incorrect: ['Sports recap', 'Game show', 'Nature tour'] },
-    { question: 'What do you call the list of everyone who worked on a movie at the end?', correct: 'The credits', incorrect: ['The recap', 'The epilogue', 'The rundown'] },
-  ],
 };
 
 const ROUND_DATA = [
@@ -213,51 +194,6 @@ const ROUND_DATA = [
       "You just four-putted from two feet in trivia form. Unbelievable.",
       "Even the cart girl stopped to watch that disaster unfold.",
       "Your caddie would've quit on the spot after that guess.",
-    ],
-  },
-  {
-    key: 'guysAndGear',
-    theme: '🚗 Guys & Gear',
-    label: 'Guys & Gear',
-    bgGradient: 'linear-gradient(135deg, #1a1a1a, #2e2e2e)',
-    triviaCategory: [28, 9],
-    triviaDifficulty: 'medium',
-    insultContext: 'cars and general knowledge',
-    fallbackInsults: [
-      "You drive a 2012 Civic and act like you know cars. You don't know shit about cars.",
-      "Bro the check engine light has been on since Obama was president. Deal with it.",
-      "You just proved that knowing how to drive and knowing anything about cars are completely different skills.",
-      "You put premium in a beater and felt good about yourself. That's not how any of this works.",
-    ],
-  },
-  {
-    key: 'nightOut',
-    theme: '🌿 Night Out',
-    label: 'Night Out',
-    bgGradient: 'linear-gradient(135deg, #1a0d2e, #0d2e1a)',
-    triviaCategory: 9,
-    triviaDifficulty: 'medium',
-    insultContext: 'bars and going out',
-    fallbackInsults: [
-      "You've been stoned since 2019 and still got that wrong. Impressive.",
-      "This is bar trivia and you just lost to the guy who's been blacked out since 8pm.",
-      "That answer was stupider than ordering a Bud Light at a craft beer bar.",
-      "You greened out on two hits and told everyone you were just tired. We know.",
-    ],
-  },
-  {
-    key: 'popCulture',
-    theme: '🎬 Pop Culture',
-    label: 'Pop Culture',
-    bgGradient: 'linear-gradient(135deg, #1a0a0a, #2e1a00)',
-    triviaCategory: 11,
-    triviaDifficulty: 'medium',
-    insultContext: 'movies and pop culture',
-    fallbackInsults: [
-      "You didn't know that? It was literally in the fucking trailer.",
-      "My dog has seen that movie. My dog got it right. You are dumber than my dog.",
-      "That's not even close, man. That's not in the same zip code as close.",
-      "You absolute disappointment. Even your guess was lazy.",
     ],
   },
 ];
@@ -729,9 +665,9 @@ function updateBeerPongAnimation(timestamp) {
   if (!state.beerPong.animationStart) state.beerPong.animationStart = timestamp;
 
   const elapsed = timestamp - state.beerPong.animationStart;
-  const speedMultiplier = Math.pow(1.08, state.roundIndex);
-  const xCycleMs = 1400 / speedMultiplier;
-  const yCycleMs = 1100 / speedMultiplier;
+  const speedMultiplier = Math.pow(1.04, state.roundIndex);
+  const xCycleMs = 2400 / speedMultiplier;
+  const yCycleMs = 1900 / speedMultiplier;
   const xRaw = (elapsed % xCycleMs) / xCycleMs;
   const yRaw = ((elapsed + 400) % yCycleMs) / yCycleMs;
 
@@ -793,8 +729,8 @@ function resolveBeerPongShot() {
   state.beerPong.phase = 'resolving';
   beerBongActionBtn.disabled = true;
 
-  // Tolerance shrinks as rounds progress: generous early, tighter later
-  const tolerance = Math.max(0.14, 0.30 - state.roundIndex * 0.022);
+  // Tolerance: tighter so aim must be accurate to sink a cup
+  const tolerance = Math.max(0.08, 0.15 - state.roundIndex * 0.012);
 
   const tableRect = beerBongTable.getBoundingClientRect();
   const shotClientX = tableRect.left + tableRect.width * state.beerPong.aimX;
