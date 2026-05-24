@@ -1,4 +1,10 @@
 const GROQ_API_KEY = ''; // Add your Groq API key here to enable AI-generated insults.
+
+// To use a custom face image instead of the default emoji/SVG faces:
+// 1. Place your image files in the assets/face/ folder (e.g., annoyed.png, angry.png, fuming.png, volcanic.png)
+// 2. Update the 'img' paths in FACE_STATES below to point to your files
+// 3. The images will be displayed at the size of the face-container (see style.css)
+// Supported formats: PNG, JPG, GIF, SVG, WebP
 const QUESTION_COUNT = 7;
 const WRONG_LIMIT = 3;
 const BUY_BEER_COST = 200;
@@ -82,31 +88,23 @@ const BEER_PONG_RESET_MSGS = [
 ];
 
 const FALLBACK_TRIVIA = {
-  hockey: [
+  sports: [
     { question: 'What do you actually smack around in hockey?', correct: 'A puck', incorrect: ['A baseball', 'A golf ball', 'A tennis ball'] },
     { question: 'How many periods are in a normal hockey game?', correct: 'Three', incorrect: ['Two', 'Four', 'Five'] },
     { question: 'Who is the dude trying to stop every shot?', correct: 'The goalie', incorrect: ['The ref', 'The mascot', 'The equipment manager'] },
     { question: 'If somebody gets checked into the boards, what sport are you watching?', correct: 'Hockey', incorrect: ['Golf', 'Baseball', 'Tennis'] },
-  ],
-  football: [
     { question: 'How many points is a touchdown before the extra kick?', correct: 'Six', incorrect: ['Three', 'Five', 'Seven'] },
     { question: 'What does a QB throw to move the chains quick?', correct: 'A pass', incorrect: ['A curveball', 'A faceoff', 'A kickoff tee'] },
     { question: 'What do they call it on 4th down when you boot it away?', correct: 'A punt', incorrect: ['A free throw', 'A slapshot', 'A penalty shot'] },
     { question: 'What part of the field are you trying to reach to score?', correct: 'The end zone', incorrect: ['The bullpen', 'Center ice', 'The dugout'] },
-  ],
-  baseball: [
     { question: 'How many strikes and you gotta head back to the dugout?', correct: 'Three', incorrect: ['Two', 'Four', 'Five'] },
     { question: 'What do you call it when the batter smokes one out of the park?', correct: 'A home run', incorrect: ['A hole in one', 'A touchdown', 'A hat trick'] },
     { question: 'How many bases are there to run in a full trip around?', correct: 'Four', incorrect: ['Three', 'Five', 'Six'] },
     { question: 'What is the guy on the mound called?', correct: 'The pitcher', incorrect: ['The bowler', 'The caddie', 'The keeper'] },
-  ],
-  basketball: [
     { question: 'How many points is a normal shot inside the arc?', correct: 'Two', incorrect: ['One', 'Three', 'Four'] },
     { question: 'How many points is a made free throw?', correct: 'One', incorrect: ['Two', 'Three', 'Zero'] },
     { question: 'What do you call it when someone throws down hard at the rim?', correct: 'A dunk', incorrect: ['A bunt', 'A chip shot', 'A body check'] },
     { question: 'If your foot is on the line for a long shot, it counts for what?', correct: 'Two points', incorrect: ['Three points', 'One point', 'Four points'] },
-  ],
-  golf: [
     { question: 'What do you yell when your shot is flying toward random people?', correct: 'Fore!', incorrect: ['Heads up!', 'Timber!', 'Inbound!'] },
     { question: 'What do golfers use to tee off on most long holes?', correct: 'A driver', incorrect: ['A putter', 'A goalie stick', 'A cue stick'] },
     { question: 'What\'s it called when you finish a hole in one less than par?', correct: 'Birdie', incorrect: ['Bogey', 'Eagle eye', 'Hat trick'] },
@@ -141,78 +139,24 @@ const FALLBACK_TRIVIA = {
 
 const ROUND_DATA = [
   {
-    key: 'hockey',
-    theme: '🏒 Hockey',
-    label: 'Hockey',
+    key: 'sports',
+    theme: '🏆 Sports',
+    label: 'Sports',
     bgGradient: 'linear-gradient(135deg, #0d1b2a, #1b4f72)',
     triviaCategory: 21,
     triviaDifficulty: 'easy',
-    insultContext: 'hockey',
+    insultContext: 'sports',
     fallbackInsults: [
       "Are you fucking serious? My grandmother knows what a puck is.",
       "You've been to zero games, owned zero jerseys, and somehow know zero facts. Impressive commitment to ignorance.",
-      "Hockey's played on ice, not in your head. Clearly.",
-      "Even the Zamboni driver would've gotten that right.",
-    ],
-  },
-  {
-    key: 'football',
-    theme: '🏈 Football',
-    label: 'Football',
-    bgGradient: 'linear-gradient(135deg, #1a2e10, #3b5e20)',
-    triviaCategory: 21,
-    triviaDifficulty: 'easy',
-    insultContext: 'football',
-    fallbackInsults: [
       "That was the mental equivalent of throwing a pick-six in your own end zone.",
       "You just fumbled the easiest trivia question known to man. Congratulations.",
-      "Bro, you picked that answer like you've never seen a football in your life.",
-      "Wide open field, nobody around, and you still tripped over yourself.",
-    ],
-  },
-  {
-    key: 'baseball',
-    theme: '⚾ Baseball',
-    label: 'Baseball',
-    bgGradient: 'linear-gradient(135deg, #0a2040, #c8a96e)',
-    triviaCategory: 21,
-    triviaDifficulty: 'easy',
-    insultContext: 'baseball',
-    fallbackInsults: [
       "My guy couldn't hit that answer with a fucking boat oar.",
-      "That swing was so late the at-bat ended last Tuesday.",
       "You struck out looking. At a tee-ball question. Go sit down.",
-      "Even the bullpen is laughing at that guess.",
-    ],
-  },
-  {
-    key: 'basketball',
-    theme: '🏀 Basketball',
-    label: 'Basketball',
-    bgGradient: 'linear-gradient(135deg, #2e1400, #b85c00)',
-    triviaCategory: 21,
-    triviaDifficulty: 'easy',
-    insultContext: 'basketball',
-    fallbackInsults: [
       "You bricked that so hard the backboard filed a restraining order.",
       "Wide open layup. No defender within five miles. Still missed. How?",
-      "That answer was uglier than a Charles Barkley jumpshot.",
-      "You just airballed trivia. That takes a special kind of talent.",
-    ],
-  },
-  {
-    key: 'golf',
-    theme: '⛳ Golf',
-    label: 'Golf',
-    bgGradient: 'linear-gradient(135deg, #0f2010, #2e6b2e)',
-    triviaCategory: 21,
-    triviaDifficulty: 'easy',
-    insultContext: 'golf',
-    fallbackInsults: [
       "That answer sliced out of bounds into the fucking parking lot. 10-stroke penalty.",
-      "You just four-putted from two feet in trivia form. Unbelievable.",
       "Even the cart girl stopped to watch that disaster unfold.",
-      "Your caddie would've quit on the spot after that guess.",
     ],
   },
   {
@@ -729,9 +673,9 @@ function updateBeerPongAnimation(timestamp) {
   if (!state.beerPong.animationStart) state.beerPong.animationStart = timestamp;
 
   const elapsed = timestamp - state.beerPong.animationStart;
-  const speedMultiplier = Math.pow(1.08, state.roundIndex);
-  const xCycleMs = 1400 / speedMultiplier;
-  const yCycleMs = 1100 / speedMultiplier;
+  const speedMultiplier = Math.pow(1.04, state.roundIndex);
+  const xCycleMs = 2400 / speedMultiplier;
+  const yCycleMs = 1900 / speedMultiplier;
   const xRaw = (elapsed % xCycleMs) / xCycleMs;
   const yRaw = ((elapsed + 400) % yCycleMs) / yCycleMs;
 
@@ -793,8 +737,8 @@ function resolveBeerPongShot() {
   state.beerPong.phase = 'resolving';
   beerBongActionBtn.disabled = true;
 
-  // Tolerance shrinks as rounds progress: generous early, tighter later
-  const tolerance = Math.max(0.14, 0.30 - state.roundIndex * 0.022);
+  // Tolerance: tighter so aim must be accurate to sink a cup
+  const tolerance = Math.max(0.08, 0.15 - state.roundIndex * 0.012);
 
   const tableRect = beerBongTable.getBoundingClientRect();
   const shotClientX = tableRect.left + tableRect.width * state.beerPong.aimX;
